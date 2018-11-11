@@ -126,3 +126,11 @@ body {
   display: inline-block;
   border-radius: 50%;
 }
+
+.sidebar-header
+{
+	margin-left: -20px;
+	font-size: 1.2em;
+}
+
+
