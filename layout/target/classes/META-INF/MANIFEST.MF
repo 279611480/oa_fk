@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Built-By: DELL
+Build-Jdk: 10.0.1
+Implementation-Title: layout
+Implementation-Version: 0.0.1-SNAPSHOT
+Implementation-Vendor-Id: org.yun
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
+ ot-starter-parent/oa/layout
+Created-By: Maven Integration for Eclipse
+
