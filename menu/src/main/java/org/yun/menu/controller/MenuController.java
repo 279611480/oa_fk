@@ -75,6 +75,15 @@ public class MenuController {
 		return this.menuService.delete(id);
 	}
 	
-	
+	// 返回JSON，使用AJAX来获取
+	@GetMapping(value="menus",produces="application/json")
+	@ResponseBody
+	 public List<Menu> findMyMenus(){
+		//找当前的用户
+		
+		
+		//TODO 当前暂时没有用户，所以直接查询所有菜单
+		return this.menuService.findTopMenus();
+	}
 	
 }

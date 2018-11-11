@@ -72,26 +72,20 @@
     <div class="container-fluid">
       <div class="row">
       	<!-- 一级二级显示的地方 -->
-        <div class="col-sm-3 col-md-2 sidebar">
-			<div class="sidebar-header">一级菜单</div>
-	        <ul class="nav nav-sidebar">
-		        <li class="active">
-		        	<a href="index.html#">
-							二级菜单 <span class="sr-only">(current)</span>
-					</a>
-				</li>
-				<li><a href="index.html#">二级菜单</a></li>
-				<li><a href="index.html#">二级菜单</a></li>
-				<li><a href="index.html#">二级菜单</a></li>
-	        </ul>
-	        
-       	</div>
+  		
+  		<div class="col-sm-3 col-md-2 sidebar" id="left-sidebar"></div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 				主体内容
 		</div>
       </div>
     </div>
-
+	
+	<script type="text/javascript">
+		var contextPath="${ctx}";
+				
+	</script>
+	
+		
    <script type="text/javascript" src="${ctx }/js/layout.js"></script>
   </body>
 </html>

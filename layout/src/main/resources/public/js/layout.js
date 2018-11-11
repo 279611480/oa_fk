@@ -7,6 +7,57 @@ $(document).ready(function(){
 		$('.sidebar').toggleClass('active')//对应index.jsp48行，调用77行  点击事件
 	});
 	
+
+
+	//使用Ajax异步请求，获取当前用户菜单，并显示出来     循环变量出来数据库的菜单
+	$.ajax({
+		url:contextPath + "/menu/menus",
+		method:"GET",
+		dataType:"JSON",//返回类型参数
+		success:function(menus,status,xhr){
+			//显示菜单
+			for(var i=0; i<menus.length; i++){
+// <div class="sidebar-header">一级菜单</div>
+// <ul class="nav nav-sidebar">
+// <li class="active">
+// <a href="index.html#">
+// 二级菜单 <span class="sr-only">(current)</span>
+// </a>
+// </li>
+// <li><a href="index.html#">二级菜单</a></li>
+// <li><a href="index.html#">二级菜单</a></li>
+// <li><a href="index.html#">二级菜单</a></li>
+// </ul>
+				//使用反引号是ECMAScript 5/6 里面提供的新功能，可以直接写多行的字符串
+				//$表示引用变量，后面跟着下面定义的变量（menu）
+				//${menu.name}不能再jsp中使用，只能在JS中使用
+				var menu = menus[i];
+				var html = `<div class="sidebar-header">${menu.name}</div>
+				<ul class="nav nav-sidebar">`;//显示一级菜单
+				// $("#left-sidebar").append(html);
+				
+	// <li><a href="index.html#">二级菜单</a></li>    显示数据库中二级菜单的内容			
+				for(var j=0;j<menu.children.length;j++){
+					var item = `<li><a href="${menu.children[j].url}">${menu.children[j].name}</a></li>`;
+					html += item; 
+				}
+				html += "</ul>";
+				if(menu.children.length>0){//判断  只有当  二级菜单有数据  才把一级菜单与二级菜单显示出来
+					$(html).appendTo($("#left-sidebar"));//显示到左边菜单栏去
+				}
+				
+			}
+			
+		},
+		error:function(data,status,xhr){
+			//弹出错误信息
+			alert(data.responseJSON.message);
+		}
+	
+	});
+	
+	
+	
 });
 
 
