@@ -27,7 +27,7 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>org.yun</groupId>
+			<groupId>org.yun.common</groupId>
 			<artifactId>data</artifactId>
 			<version>${project.version}</version>
 		</dependency>

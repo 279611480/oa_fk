@@ -5,7 +5,7 @@
     <artifactId>common</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <groupId>org.yun</groupId>
+  <groupId>org.yun.common</groupId>
   <artifactId>data</artifactId>
   <description>所有跟数据相关的通用工具，全部放到此项目</description>
 </project>

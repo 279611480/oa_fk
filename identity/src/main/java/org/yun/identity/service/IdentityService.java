@@ -1,5 +1,7 @@
 package org.yun.identity.service;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.yun.identity.domain.User;
 
@@ -15,6 +17,10 @@ public interface IdentityService {
 	void active(String id);
 
 	void disable(String id);
+
+
+
+	Optional<User> findByLoginName(String loginName);
 
 
 	

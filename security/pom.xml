@@ -22,7 +22,6 @@
 			<artifactId>sitemesh</artifactId>
 			<version>3.0.1</version>
 		</dependency>
-
   <!-- 数据库驱动    要加进来因为  最新版本太高 电脑不支持-->
 		<dependency>
 			<groupId>mysql</groupId>
@@ -32,13 +31,7 @@
 		</dependency>
   		
   		
-  		<!--使用 <scope>provided</scope> 的，都要加进来  不然找不到   -->
-		
-		<dependency>
-			<groupId>org.yun</groupId>
-			<artifactId>data</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+  	
 		
 		<!-- 加入Servlet API的依赖 -->
 		<dependency>
@@ -56,7 +49,6 @@
 			<!-- 如果在mvn命令直接运行，该依赖也会加入类路径 -->
 			<scope>provided</scope>
 		</dependency>
-
 		<!-- 开发的时候使用的，用于自动部署、自动重启，修改的文件可以马上生效 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -65,7 +57,19 @@
 			<!-- 可选的，必须设置为true，才能实现热部署 -->
 			<optional>true</optional>
 		</dependency>
-		
+		<!-- Spring Boot自动配置Spring Security -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+				
+		</dependency>
+		<!-- 加入Spring Security的单元测试框架，方便进行安全测试 -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+			
+		</dependency>
 		
 		
 		
@@ -75,4 +79,4 @@
   
   
   
-</project>
+</project> 

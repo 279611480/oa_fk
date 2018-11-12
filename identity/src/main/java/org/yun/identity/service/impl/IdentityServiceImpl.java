@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import org.yun.identity.domain.User.Status;
 import org.yun.identity.repository.RoleDao;
 import org.yun.identity.repository.UserDao;
 import org.yun.identity.service.IdentityService;
+
 
 @Service
 public class IdentityServiceImpl implements IdentityService {
@@ -212,5 +214,15 @@ public class IdentityServiceImpl implements IdentityService {
 		}
 		
 	}
+
+	@Override
+	public Optional<User> findByLoginName(String loginName) {
+		User user = this.userDao.findByLoginName(loginName);
+		//把查询的User转为option
+		Optional<User> op = Optional.ofNullable(user);
+		return op;
+		
+	}
+
 
 }

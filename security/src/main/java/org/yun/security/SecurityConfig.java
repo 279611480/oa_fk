@@ -1,28 +1,55 @@
 package org.yun.security;
 
-import java.util.HashMap;
-import java.util.Map;
 
-import javax.servlet.DispatcherType;
 
-import org.sitemesh.config.ConfigurableSiteMeshFilter;
+
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
+
 import org.springframework.context.annotation.ComponentScan;
+
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 
 @SpringBootApplication//使用SpringBoot自带的Tomcate
 @EnableJpaRepositories//激活Jpa的自动Dao扫描
 @ComponentScan("org.yun")//包扫描
 /**实现WebMvcConfigurer   增加拦截器 不是这里想要的*/
-public class SecurityConfig implements WebMvcConfigurer{
+//WebSecurityConfigurerAdapter implements WebMvcConfigurer
+public class SecurityConfig extends WebSecurityConfigurerAdapter   implements WebMvcConfigurer {
 	
+	//基于Http的安全控制
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http.authorizeRequests()//验证请求
+		//登录页面的地址和其他的静态页面都不要权限
+		// /*表示目录下的任何地址，但是不包括子目录
+		// /**则是连子目录都一起匹配
+		.antMatchers("/security/login", "/css/**", "/js/**", "/webjars/**", "/static/**")//
+		.permitAll()// 不做访问判断
+		.anyRequest()// 所有请求
+		.authenticated()// 授权以后才能访问
+		.and()// 并且
+		.formLogin()// 使用表单进行登录
+		.loginPage("/security/login")// 登录页面的位置，默认是/login
+		// 此页面不需要有对应的JSP，而且也不需要有对应代码，只要URL
+		// 这个URL是Spring Security使用的，用来接收请求参数、调用Spring Security的鉴权模块
+		.loginProcessingUrl("/security/do-login")// 处理登录请求的URL
+		.usernameParameter("loginName")// 登录名的参数名
+		.passwordParameter("password")// 密码的参数名称
+		// .and().httpBasic()// 也可以基于HTTP的标准验证方法（弹出对话框）
+		.and().csrf()// 激活防跨站攻击功能
+		;
+		
+	}
+
+
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
