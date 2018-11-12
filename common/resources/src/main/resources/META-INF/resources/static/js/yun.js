@@ -50,21 +50,35 @@ $(function(){
 	//另外，未选中的角色，要全部取消勾选
 	//最后还需要把勾选的input的name属性中的数字，替换成0\1\2这种形式
 					
-	$(".select-role-form").bind("submit",function(){
-		$(".select-role-form .selected-roles ul li input").each(function(index, input) {
-			$(input).prop("checked", true);// 勾选
-
-			// 替换name中的数字
-			var name = $(input).attr("name");
-			name = name.replace(/\d+/, index);
-			$(input).attr("name", name);
-		});
-
-		$(".select-role-form .unselect-roles ul li input").each(function(index, input) {
-			$(input).prop("checked", false);// 取消勾选
-		});
-	}); 
-
+	var checkRolesOnSubmit = function() {
+		$(".select-role-form .selected-roles ul li input").each(
+				function(index, input) {
+					$(input).prop("checked", true);// 勾选
+					// 替换name中的数字
+					var name = $(input).attr("name");
+					name = name.replace(/\d+/, index);
+					$(input).attr("name", name);
+				});
+		$(".select-role-form .unselect-roles ul li input").each(
+				function(index, input) {
+					$(input).prop("checked", false);// 取消勾选
+				});
+	};
+	$(".select-role-form").bind("submit", checkRolesOnSubmit);
+		
+			var token = $("meta[name='_csrf']").attr("content");
+			var header = $("meta[name='_csrf_header']").attr("content");
+			
+			//在所有的Ajax请求发送之前，统一设置请求头
+			//这种方式设置的，只能处理通过jQuery发送的Ajax请求
+			if(token && header){
+				$(document).ajaxSend(function(e,xhr,options){
+					
+					xhr.setRequestHeader(header,token);
+					});
+				}
+			
+			
 });
 
 

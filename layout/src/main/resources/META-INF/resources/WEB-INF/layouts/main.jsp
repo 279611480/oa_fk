@@ -19,7 +19,13 @@
 	     
 	<script type="text/javascript" src="${ctx }/webjars/jquery/3.3.1/dist/jquery.min.js"></script>
 	<script type="text/javascript" src="${ctx }/webjars/bootstrap/3.3.7/dist/js/bootstrap.min.js"></script>
-
+	
+	<!-- 把CSRF的验证码方法哦HTML里面保存起来 -->
+	<!-- 使用Ajax的时候，必须要设置请求头，请求头的内容从HTML中获取 -->
+	<meta name="_csrf" content="${_csrf.token}"/>
+	<meta name="_csrf_header" content="${_csrf.headerName}"/>
+	
+	<script type="text/javascript" src="${ctx }/static/js/yun.js"></script>
 	<sitemesh:write property="head"/> 
   </head>
 

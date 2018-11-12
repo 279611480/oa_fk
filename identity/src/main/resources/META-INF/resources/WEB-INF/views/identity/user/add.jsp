@@ -30,6 +30,9 @@
 				<!-- 修改用户的时候，需要有id   但是id不想让用户看见 那么，设置为隐藏 -->
 				<input name="id" value="${user.id }" type="hidden" />
 				
+				<!-- 当用户打开表单的时候，生成一个随机验证码存储在表单里面 -->
+				<!--  提交的时候，会判断session里面是否有随机验证码，并且要求浏览器提交过来的随机验证码要相同-->
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 				
 			<div class="col-sm-12 col-md-6">
 				<label for="inputName" class="col-sm-2 contro-label" >姓名</label>

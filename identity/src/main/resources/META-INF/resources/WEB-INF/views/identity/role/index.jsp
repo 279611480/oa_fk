@@ -101,6 +101,7 @@
 				<!-- 角色修改的表单 -->
 				<form class="" method="post" class="form-horizontal">
 					<input type="hidden" name="id" /><!-- 传入  登录者的id  以方便做修改  但是不想让那个用户看见 -->
+					<input type="hidden" name="${_csrf.parameterName }" value="${_csrf.token }" />
 					<div class="col-sm-12 ">
 						<div class="form-group">
 							<label for="inputName" class="col-sm-2 contro-label" >角色名称</label>
