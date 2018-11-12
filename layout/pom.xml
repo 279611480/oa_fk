@@ -68,6 +68,12 @@
 		</dependency>
 		
 		
+		<!-- 使用页面装饰器，对所有的页面增加相对应的装饰效果 -->
+		<dependency>
+			<groupId>org.sitemesh</groupId>
+			<artifactId>sitemesh</artifactId>
+			<version>3.0.1</version>
+		</dependency>
 		
 		
 	</dependencies>
