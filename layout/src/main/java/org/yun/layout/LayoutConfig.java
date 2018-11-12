@@ -68,7 +68,24 @@ public class LayoutConfig implements WebMvcConfigurer{
 		 *    使用main.jsp来装饰
 		 *    /admin/*使用admin.jsp来装饰      	【配置不同的路径，使用不同的装饰器】
 		 * */
-		initParameters.put("decoratorMappings", "/*=/WEB-INF/layouts/main.jsp\n/admin/*=/WEB-INF/layouts/admin.jsp\");");
+		//initParameters.put("decoratorMappings", "/*=/WEB-INF/layouts/main.jsp\n/admin/*=/WEB-INF/layouts/admin.jsp\");");
+			/**
+			 * /*=/WEB-INF/layouts/main.jsp  ，表示所有的模块内容，公共可拥有的东西，
+			 * 		也是把其他模块的页面，加进这里面来统一布局 
+			 * 
+			 * 			\n" 
+						//不带横幅、菜单布局   
+						+ "/security/login=/WEB-INF/layouts/simple.jsp"
+			 * 将security模块的，界面，加入统一布局页面里面，在simple.jsp使用三个标签属性加入公告部分 
+			 * */
+			initParameters.put("decoratorMappings",
+					//带横幅、菜单布局
+					"/*=/WEB-INF/layouts/main.jsp\n" 
+						//不带横幅、菜单布局   
+						+ "/security/login=/WEB-INF/layouts/simple.jsp"
+						/**将security模块的simple.jsp页面被main.jsp统一布局处理*/
+					);
+			
 		bean.setInitParameters(initParameters);
 		
 		return bean;
