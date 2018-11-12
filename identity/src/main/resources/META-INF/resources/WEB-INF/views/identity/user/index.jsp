@@ -14,11 +14,7 @@
 <head>
 <meta charset="utf-8">
 <title>用户管理</title>
-	<link rel="stylesheet" href="${ctx }/webjars/bootstrap/3.3.7/dist/css/bootstrap.min.css"/>
-	<script type="text/javascript" src="${ctx }/webjars/jquery/3.3.1/dist/jquery.min.js"></script>
-	<script type="text/javascript" src="${ctx }/webjars/bootstrap/3.3.7/dist/js/bootstrap.min.js"></script>
-	<!-- 将css样式提取出来 放到resources里面 -->
-	<link rel="stylesheet" href="${ctx }/static/css/yun.css"/>
+
 	
 </head>
 <body>

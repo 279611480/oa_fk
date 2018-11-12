@@ -10,12 +10,7 @@
 <head>
 <meta charset="utf-8">
 <title>编辑用户信息</title>
-	<link rel="stylesheet" href="${ctx }/webjars/bootstrap/3.3.7/dist/css/bootstrap.min.css"/>
-	<script type="text/javascript" src="${ctx }/webjars/jquery/3.3.1/dist/jquery.min.js"></script>
-	<script type="text/javascript" src="${ctx }/webjars/bootstrap/3.3.7/dist/js/bootstrap.min.js"></script>
-	<!-- 将css样式提取出来 放到resources里面 -->
-	<link rel="stylesheet" href="${ctx }/static/css/yun.css"/>
-	<script type="text/javascript" src="${ctx }/static/js/yun.js"></script>
+	
 
 	
 </head>
@@ -143,10 +138,7 @@
 	 	</div>
 	</div>
 	<!-- 绑定事件  实现功能 -->
-	<script type="text/javascript">
-		
-
-	</script>
+	<script type="text/javascript" src="${ctx }/static/js/yun.js"></script>
 	
 	
 		
