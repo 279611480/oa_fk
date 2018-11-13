@@ -26,6 +26,13 @@ public class UserHolderInterceptors extends HandlerInterceptorAdapter {
 			 *   
 			 *  获取当前用户信息的方式之一 			拿到UserDetails里面user对象
 			 *   */
+			//如果用户不存在（数据库）就返回true
+			if (SecurityContextHolder//
+					.getContext()//
+					.getAuthentication() == null) {
+				return true;
+			}
+				
 			//根据上下文去拿
 			Object principai = SecurityContextHolder//通过这个类，调用方法  拿到UserDetails的user信息
 								.getContext()//上下文

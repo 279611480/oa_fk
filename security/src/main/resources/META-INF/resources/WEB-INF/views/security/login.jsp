@@ -14,7 +14,8 @@
 		<c:if test="${param.logout eq '' }">
 			<div class="alert alert-success" role="alert">成功退出登录</div>
 		</c:if>
-		<c:if test="${param.error eq '' }">
+	
+		<c:if test="${param.error eq '' or not empty sessionScope['SPRING_SECURITY_LAST_EXCEPTION'] }">
 			<div class="alert alert-danger" role="alert">
 				<strong>登录失败</strong>
 				${sessionScope['SPRING_SECURITY_LAST_EXCEPTION'].message }
@@ -32,7 +33,8 @@
 				placeholder="登录名"
 				required="required"
 				autofocus="autofocus"
-				name="loginName"/> 
+				name="loginName"
+		    	value="${sessionScope.loginName }"/>
 				
 			<label for="inputPassword" class="sr-only">密码</label>
 			<input type="password" 
