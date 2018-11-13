@@ -42,7 +42,7 @@ public class UserHolderInterceptors extends HandlerInterceptorAdapter {
 				//使用UserHolder的方法  将拿到的用户信息，设置到线程里面去  
 				user.setId(details.getUserId());
 				user.setName(details.getName());
-				
+				//System.out.println(user.getId() +"---------------------------");
 				//将信息设置到线程里面去
 				UserHolder.set(user);
 			}

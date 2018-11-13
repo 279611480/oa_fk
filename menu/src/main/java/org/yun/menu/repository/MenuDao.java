@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.yun.identity.domain.Role;
 import org.yun.menu.domain.Menu;
 
 @Repository
@@ -32,6 +33,8 @@ public interface MenuDao extends JpaRepository<Menu,String> {
 	Page<Menu> findByParentAndNumberLessThanOrderByNumberDesc(Menu parent, Double number, Pageable pageable);
 
 	Page<Menu> findByParentAndNumberGreaterThanOrderByNumberAsc(Menu parent, Double number, Pageable pageable);
+
+	List<Menu> findByRolesIn(List<Role> roles);
 
 	
 	

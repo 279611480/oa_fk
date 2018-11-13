@@ -15,6 +15,8 @@ public interface MenuService {
 
 	Result delete(String id);
 
+	List<Menu> finMyMenus();
+
 
 	
 }

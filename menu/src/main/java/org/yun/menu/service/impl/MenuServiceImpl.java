@@ -1,9 +1,12 @@
 package org.yun.menu.service.impl;
 
 
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.transaction.Transactional;
@@ -15,8 +18,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.yun.common.data.domain.Result;
+import org.yun.identity.UserHolder;
 import org.yun.identity.domain.Role;
+import org.yun.identity.domain.User;
 import org.yun.identity.repository.RoleDao;
+import org.yun.identity.repository.UserDao;
 import org.yun.menu.domain.Menu;
 import org.yun.menu.repository.MenuDao;
 import org.yun.menu.service.MenuService;
@@ -30,7 +36,8 @@ public class MenuServiceImpl implements MenuService {
 	private RoleDao roleDao;
 	@Autowired
 	private MenuDao menuDao;
-	
+	@Autowired
+	private UserDao userDao;
 	/**
 	 * menu是页面  传过来的菜单  
 	 * old是从数据库里面查找出来的  菜单数据
@@ -281,5 +288,113 @@ public class MenuServiceImpl implements MenuService {
 		//如果说，要删除的菜单节点为空的话(entity)，那么就直接返回，删除成功的状态
 		return Result.ok();
 	}
-	
+
+	@Override
+	public List<Menu> finMyMenus() {
+		//拿到从线程里面的User是瞬态的，不是持久化状态的
+		User user = UserHolder.get();
+		//拿到持久化状态的User
+		//【调用用户持久层.getOne()方法,将上面拿到的user传入当做参数，查询数据库有没有对应的user】
+		user = userDao.getOne(user.getId());
+		//持久化状态user，调用方法拿到所有角色【因为可能传入不同的用户，找到它们所对应的角色】
+		//， 拿个list集合接收
+		List<Role> roles = user.getRoles();
+		
+		/**
+		 *根据roles集合，查询所有的菜单，得到用户有权限访问的菜单
+		 *此时得到的菜单，可能只包括一级。二级、三级.....等所有可能存在的菜单
+		 *左侧的菜单树，其实只要两级（一级、二级）即可，并且应该返回一级、在一级里面包含二级
+		 *1.根据	角色，查询到所有的（对应的）菜单	 【调用菜单持久层方法查询角色In】
+		 * */
+		List<Menu> menus = this.menuDao.findByRolesIn(roles);//使用in查询
+		/**创建一个LinkList集合  接收，准备返回的一级菜单*/
+		List<Menu> topMenus = new LinkedList<>();
+		/**
+		 *  找到所有的一级菜单，放入topMenus
+		 *循环所有的二级、三级...菜单，
+		 *以parent【一级菜单】作为Key放入map里面，value是一个集合表示parent对应所有权的下一级 
+		 * */
+		Map<Menu, List<Menu>> map = new HashMap<>();
+		/**
+		 * 此循环结束后，Map里面的数据，包括所有的上级、下级的菜单，并且是有权限的
+		 * 2.建立一级菜单和二级菜单的对应关系
+		 *使用流式API写法  返回上面所需要的
+		 * */
+		menus.stream()
+				.filter(menu->menu.getParent() != null)//表示，下级菜单。
+				/**遍历循环拿到它的父级菜单，而且判断，
+				 * 父级菜单是不是数据库（map）拥有了，没的话就加入，有的话，拿到父级菜单，将自己菜单设置进去
+				*/
+				.forEach(menu->{
+					//拿到上一级菜单
+					Menu parent = menu.getParent();
+					//判断   如果说上级菜单不是，上面使用线程用户拿到的父级菜单集合里面  
+					if(!map.containsKey(parent)) {
+						//那就把它放进去
+						map.put(parent, new LinkedList<>());
+					}
+					//不然的话，说明是，map里面的父级菜单，那就把它所对应的下级菜单，加入父级菜单里面
+					List<Menu> childs = map.get(parent);
+					childs.add(menu);//把当前菜单加入对应的上级菜单去
+				});
+				
+			//在内存里面，对菜单进行排序，以序号为排序的依据   不排序的话，每次刷新页面，菜单 
+
+			Comparator<Menu> comparator=(menu1,menu2)->{
+				if(menu1.getNumber() > menu2.getNumber()) {
+					return 1;
+				}else if(menu1.getNumber() < menu2.getNumber()) {
+					return -1;
+				}else {
+					return 0;
+				}
+			};
+			/**3.构建新的一级菜单，并且把二级菜单放入一级菜单里面*/
+			map.entrySet().stream()
+							//判断Key没有上级的菜单，表示一级菜单
+							.filter(entry->entry.getKey().getParent() == null)
+							//那么，把它遍历出来
+							.forEach(entry->{
+								//拿到一级菜单
+								Menu parent = entry.getKey();
+								//拿到二级菜单，且用List集合接收
+								List<Menu> 二级菜单 = entry.getValue();
+								//查询得到的是持久化对象，不要修改它们
+								//返回菜单的时候，由于需要通过权限组装数据，所以是需要修改Menu对象
+								//因此创建一个新的Menu ,避免被意外修改
+								Menu menu = this.copy(parent);//拿到一级菜单
+								//forEach循环遍历二级菜单
+								二级菜单.forEach(child->{
+									Menu subMenu = this.copy(child);
+									menu.getChilds().add(subMenu);//将二级菜单加入到一级菜单去												
+								});
+								//排序二级菜单
+								//System.out.println(menu.getChilds()+"----------------------------------------");
+								menu.getChilds().sort(comparator);
+								//把一级菜单加入返回的集合里面去
+								topMenus.add(menu);	
+							});	
+			//排序一级菜单
+			topMenus.sort(comparator);
+			//返回的菜单集合			
+			return topMenus;
+	}
+	/**
+	 * 提取出来的方法  被上面调用
+	 * 
+	 * 传入持久化对象，返回瞬态对象
+	 * param persist 数据库查询得到的
+	 * @return 瞬态的
+	 * */
+	private Menu copy(Menu persist) {
+		Menu menu =  new Menu();//瞬态对象
+		//将从数据库里面找到的菜单Id,Name,Number,Url,Childs设置到瞬态对象去，以免修改数据库的信息
+		menu.setId(persist.getId());
+		menu.setName(persist.getName());
+		menu.setNumber(persist.getNumber());
+		menu.setUrl(persist.getUrl());
+		menu.setChilds(new LinkedList<>());
+		//返回瞬态对象
+		return menu;
+	}
 }

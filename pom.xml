@@ -47,6 +47,6 @@
 		<module>menu</module>
 		<module>layout</module>
 		<module>security</module>
-		<module>dsfsd</module>
+	
 	</modules>
 </project>

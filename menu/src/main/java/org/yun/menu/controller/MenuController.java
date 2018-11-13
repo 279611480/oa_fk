@@ -82,8 +82,14 @@ public class MenuController {
 		//找当前的用户
 		
 		
-		//TODO 当前暂时没有用户，所以直接查询所有菜单
-		return this.menuService.findTopMenus();
+		/*TODO 当前暂时没有用户，所以直接查询所有菜单
+		return this.menuService.findTopMenus();*/
+		
+		/**现在已经拿到登录用户的user信息，传到线程里面，
+		 * 可以拿到用户信息了  所以该实现对应用户，的所拥有的角色了*/
+		return this.menuService.finMyMenus();
+	
+	
 	}
 	
 }
