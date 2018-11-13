@@ -14,6 +14,13 @@
 		<c:if test="${param.logout eq '' }">
 			<div class="alert alert-success" role="alert">成功退出登录</div>
 		</c:if>
+		<c:if test="${param.error eq '' }">
+			<div class="alert alert-danger" role="alert">
+				<strong>登录失败</strong>
+				${sessionScope['SPRING_SECURITY_LAST_EXCEPTION'].message }
+			</div>
+		</c:if>
+		
 		
 		<!-- security/do-login  在config文件是，调用鉴权模块 这里是使其被鉴权 -->
 		<form class="form-signin" action="${ctx }/security/do-login" method="post">
