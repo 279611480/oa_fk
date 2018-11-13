@@ -9,9 +9,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.yun.security.interceptors.UserHolderInterceptors;
 
 
 @SpringBootApplication//使用SpringBoot自带的Tomcate
@@ -20,6 +22,21 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 /**实现WebMvcConfigurer   增加拦截器 不是这里想要的*/
 //WebSecurityConfigurerAdapter implements WebMvcConfigurer
 public class SecurityConfig extends WebSecurityConfigurerAdapter   implements WebMvcConfigurer {
+	
+	@Override/**注册一个拦截器，拦截所有的路径，拿到线程里面的user信息*/
+	public void addInterceptors(InterceptorRegistry registry) {
+		registry.addInterceptor(new UserHolderInterceptors())
+				.addPathPatterns("/**")//表示会去找下一级（目录/菜单等）
+				//默认Spring Security的拦截器，已经在其他拦截器之前
+				//所以不用使用order也是可以有效的
+				//如果不能正常获取到User(通过UserHolder)，那么就需要修改顺序
+				//.order(Integer.MAX_VALUE);//升序排（ 1 2 3 4 5 ）  拿到大的值   
+										  //表示在所有的拦截器之前，就会把线程里面的user信息拿到
+				;
+	}
+	
+	
+	
 	
 	//基于Http的安全控制
 	@Override
