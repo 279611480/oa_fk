@@ -36,8 +36,7 @@ public class SecurityServiceImpl implements SecurityService  {
 			authorities.add(ga);
 		});
 		UserDetails ud = new UserDetails(user, authorities);
-		/*Exception ex = new Exception();
-		ex.printStackTrace();*/
+
 		return ud;
 	}
 }
