@@ -47,6 +47,7 @@
 		<module>menu</module>
 		<module>layout</module>
 		<module>security</module>
-	
+
+		<module>file</module>
 	</modules>
 </project>

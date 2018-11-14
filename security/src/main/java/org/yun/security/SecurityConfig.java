@@ -34,8 +34,11 @@ import org.yun.security.service.SecurityService;
 @ComponentScan("org.yun")//包扫描
 /**实现WebMvcConfigurer   增加拦截器 不是这里想要的*/
 //WebSecurityConfigurerAdapter implements WebMvcConfigurer
-public class SecurityConfig extends WebSecurityConfigurerAdapter   implements WebMvcConfigurer {
+public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
+	
+	
+	
 	@Autowired
 	private SecurityService securityService;
 	@Autowired
@@ -151,8 +154,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter   implements We
 		registry.addViewController("/security/login")//接收浏览器（URL）传过来的请求
 								.setViewName("security/login");//找到对应的资源位置
 		registry.addViewController("/index").setViewName("security/index");
+	
+		
 		//欢迎页，访问根目录重定向到一个首页
 		registry.addRedirectViewController("/","/index");
+		
 		
 	}
 

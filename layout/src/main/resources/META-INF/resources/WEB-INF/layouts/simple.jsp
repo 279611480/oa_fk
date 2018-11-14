@@ -11,8 +11,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
     <link rel="icon" href="${ctx}/images/favicon.ico"><%-- Logo  名字最好是favicon.ico --%>
-    <title>麻花藤智能办公自动化  security模块被统一后，登陆成功的点击security后的页面 --
-    		<sitemesh:write property="title"/></title>
+    <title>麻花藤智能办公自动化 <sitemesh:write property="title"/></title>
     		
     <!-- Bootstrap core CSS -->
 	<link rel="stylesheet" href="${ctx }/webjars/bootstrap/3.3.7/dist/css/bootstrap.min.css"/>	
