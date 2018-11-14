@@ -108,7 +108,7 @@ public class MenuServiceImpl implements MenuService {
 		//如果说  old（从数据库查到的菜单数据）不为空，与页面上新增菜单的数据  菜单 同级的情况下   
 		//那么，新增菜单的数据的number（菜单排序序号）就是数据库里面查找到的最大number
 		if(old != null) {//对应54行的old  有父级菜单的情况下
-			menu.setName(old.getName());
+			menu.setNumber(old.getNumber());
 		}else {//对应59行的old    没有父级菜单的情况下
 			//否则的话，  那么先设置一个Double类型数据的maxNumber
 			Double maxNumber;
@@ -189,7 +189,7 @@ public class MenuServiceImpl implements MenuService {
 			if(maxNumber==null) {
 				maxNumber=0.0;
 			}
-			Double number = maxNumber +10000000.0;;
+			Double number = maxNumber +10000000.0;
 			menu.setNumber(number);
 			menu.setParent(null);
 			return Result.ok();
@@ -307,6 +307,15 @@ public class MenuServiceImpl implements MenuService {
 		 *1.根据	角色，查询到所有的（对应的）菜单	 【调用菜单持久层方法查询角色In】
 		 * */
 		List<Menu> menus = this.menuDao.findByRolesIn(roles);//使用in查询
+		
+		
+		Set<Menu> set = new HashSet<>();
+		menus.forEach(m->{
+			set.add(m);
+		});
+		menus.clear();
+		menus.addAll(set);
+		//DistinctMenu
 		/**创建一个LinkList集合  接收，准备返回的一级菜单*/
 		List<Menu> topMenus = new LinkedList<>();
 		/**
@@ -315,6 +324,8 @@ public class MenuServiceImpl implements MenuService {
 		 *以parent【一级菜单】作为Key放入map里面，value是一个集合表示parent对应所有权的下一级 
 		 * */
 		Map<Menu, List<Menu>> map = new HashMap<>();
+		
+		
 		/**
 		 * 此循环结束后，Map里面的数据，包括所有的上级、下级的菜单，并且是有权限的
 		 * 2.建立一级菜单和二级菜单的对应关系
