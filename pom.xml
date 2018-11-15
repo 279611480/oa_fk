@@ -48,6 +48,6 @@
 		<module>layout</module>
 		<module>security</module>
 
-		<module>file</module>
+		<module>storage</module>
 	</modules>
 </project>

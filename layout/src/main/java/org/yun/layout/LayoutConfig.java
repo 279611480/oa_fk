@@ -114,7 +114,7 @@ public class LayoutConfig implements WebMvcConfigurer{
 			public void registerErrorPages(ErrorPageRegistry registry) {
 				//registry.addErrorPages(new ErrorPage(HttpStatus.NOT_FOUND,"/layout/ex"));   地址输错就能看到效果 404
 				registry.addErrorPages(new ErrorPage(HttpStatus.INTERNAL_SERVER_ERROR,"/layout/ex"));  //500不好看效果
-
+				
 			
 			}
 		};

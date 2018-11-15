@@ -4,6 +4,12 @@ spring:
    mvc.view:
       prefix: /WEB-INF/views/
       suffix: .jsp
+      
+   servlet.multpart:
+      #可以不写单位，默认是MB，建议写单位
+      #KB  MB  GB TB
+      maxFileSize:10MB  
+      
    # 数据源的配置
    datasource:
       driverClassName: com.mysql.jdbc.Driver
@@ -26,3 +32,4 @@ spring:
       openInView: true
    messages:
       basename:org.yun.security.messages      
+yun.storage.dir: E:/JAVATem/XNM/day06Test    
