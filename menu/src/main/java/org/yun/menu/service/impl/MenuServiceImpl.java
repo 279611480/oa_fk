@@ -108,7 +108,7 @@ public class MenuServiceImpl implements MenuService {
 		//如果说  old（从数据库查到的菜单数据）不为空，与页面上新增菜单的数据  菜单 同级的情况下   
 		//那么，新增菜单的数据的number（菜单排序序号）就是数据库里面查找到的最大number
 		if(old != null) {//对应54行的old  有父级菜单的情况下
-			menu.setName(old.getName());
+			menu.setNumber(old.getNumber());
 		}else {//对应59行的old    没有父级菜单的情况下
 			//否则的话，  那么先设置一个Double类型数据的maxNumber
 			Double maxNumber;
@@ -307,6 +307,7 @@ public class MenuServiceImpl implements MenuService {
 		 *1.根据	角色，查询到所有的（对应的）菜单	 【调用菜单持久层方法查询角色In】
 		 * */
 		List<Menu> menus = this.menuDao.findByRolesIn(roles);//使用in查询
+		//List<Menu> menus = this.menuDao.findDistinctMenuByRolesIn(roles);//使用in查询
 		/**创建一个LinkList集合  接收，准备返回的一级菜单*/
 		List<Menu> topMenus = new LinkedList<>();
 		/**
