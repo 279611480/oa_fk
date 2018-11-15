@@ -51,7 +51,8 @@
  					<tr>
  						<td colspan="5" style="text-align: center;">
  							<%-- 前缀随便写，关键要跟taglib指令的前缀要一致，冒号后面的则直接使用JSP Tag文件的名称 --%>
- 							<yun:page url="/storage/file" page="${page }"/>
+ 							<yun:page url="/storage/file?keyword=${param.keyword }" page="${page }"/>
+ 						
  						</td>
  					</tr>
 				</tfoot>
