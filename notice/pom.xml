@@ -5,7 +5,7 @@
     <artifactId>oa</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>notice</artifactId>
+  <artifactId>noticetype</artifactId>
   <description>负责公告类型、公告发布、公告阅读、公告删除</description>
   
   
@@ -66,6 +66,13 @@
 			<scope>test</scope>
 			
 		</dependency>
+		
+		<dependency>
+			<groupId>org.webjars.bower</groupId>
+			<artifactId>wangEditor</artifactId>
+			<version>3.1.1</version>
+		</dependency>
+		
 		
 		
 		

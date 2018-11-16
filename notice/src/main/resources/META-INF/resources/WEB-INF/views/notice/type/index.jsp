@@ -2,14 +2,12 @@
     pageEncoding="utf-8"%>
     <!-- 引入标签库 -->
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"  %>
-
 	
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
 <title>公告类型管理</title>
-
 	<style type="text/css">
 		
 	</style>
@@ -23,11 +21,9 @@
 				var div = $(this);//div 绑定点击60行 事件
 				var id =div.attr("data-id");//将点击后的数据的 内容赋值给id  接收
 				var name=div.attr("data-name");
-
 				//这里  是  将数据显示出来  利用jQuery  调用选择器  设值进去
 				$(".role-form [name='id'] ").val(id);
 				$(".role-form #inputName").val(name);
-
 			});	
 			 
 			$(".type").hover(function(){

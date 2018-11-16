@@ -7,10 +7,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.yun.notice.domain.NoticeType;
 import org.yun.notice.repository.NoticeTypeDao;
-import org.yun.notice.service.NoticeService;
+import org.yun.notice.service.NoticeTypeService;
 
 @Service
-public class NoticeServiceImpl implements NoticeService {
+public class NoticeTypeServiceImpl implements NoticeTypeService {
 
 	
 	@Autowired

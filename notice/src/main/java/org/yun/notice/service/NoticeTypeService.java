@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.yun.notice.domain.NoticeType;
 
-public interface NoticeService {
+public interface NoticeTypeService {
 
 	List<NoticeType> findAllTypes();
 

@@ -49,6 +49,6 @@
 		<module>security</module>
 
 		<module>storage</module>
-		<module>notice</module>
+		<module>noticetype</module>
 	</modules>
 </project>

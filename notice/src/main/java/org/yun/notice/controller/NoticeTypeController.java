@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.yun.notice.domain.NoticeType;
-import org.yun.notice.service.NoticeService;
+import org.yun.notice.service.NoticeTypeService;
 
 @Controller
 @RequestMapping("/notice/type")//接收页面传输过来的URL
 public class NoticeTypeController {
 	
 	@Autowired
-	private NoticeService noticeService;
+	private NoticeTypeService noticeService;
 	
 	@GetMapping//处理URL   跳转至页面
 	public ModelAndView index() {
