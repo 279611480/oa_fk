@@ -40,7 +40,7 @@
 								<td>${i.fileSize }</td>
 								<td>${i.uploadTime }</td>	
 								<td>
-									下载
+									<a href="${ctx }/storage/file/${i.id}" >下载</a>
 									删除
 								</td>							
 							</tr>
