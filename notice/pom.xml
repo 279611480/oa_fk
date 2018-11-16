@@ -5,26 +5,19 @@
     <artifactId>oa</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>storage</artifactId>
-  <description>文件上传、下载</description>
+  <artifactId>notice</artifactId>
+  <description>负责公告类型、公告发布、公告阅读、公告删除</description>
   
-   <!-- 加入必要模块，与依赖 -->
+  
+  <!-- 加入必要模块，与依赖 -->
   <dependencies>
   	
   	<dependency>
   		<groupId>org.yun</groupId>
-  		<artifactId>security</artifactId>
+  		<artifactId>storage</artifactId>
   		<version>${project.version}</version>
   	</dependency>
-  	
-		
-		
-		<!-- 使用页面装饰器，对所有的页面增加相应的装饰效果 -->
-		<dependency>
-			<groupId>org.sitemesh</groupId>
-			<artifactId>sitemesh</artifactId>
-			<version>3.0.1</version>
-		</dependency>
+ 
   <!-- 数据库驱动    要加进来因为  最新版本太高 电脑不支持-->
 		<dependency>
 			<groupId>mysql</groupId>
@@ -77,5 +70,8 @@
 		
 		
 	</dependencies>
+  
+  
+  
   
 </project>
