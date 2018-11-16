@@ -173,7 +173,7 @@ public class FileController {
 	
 	@DeleteMapping("{id}")
 	@ResponseBody
-	public Result delete(@PathParam("id")String id) {
+	public Result delete(@PathVariable("id")String id) {
 		return this.fileService.deleteFile(id);
 	}
 	

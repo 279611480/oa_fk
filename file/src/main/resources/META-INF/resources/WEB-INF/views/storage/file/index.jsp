@@ -41,7 +41,8 @@
 								<td>${i.uploadTime }</td>	
 								<td>
 									<a href="${ctx }/storage/file/${i.id}" >下载</a>
-									删除
+									<a href="javascript:deleteFile('${i.id }')">删除</a><!--见91  -->
+
 								</td>							
 							</tr>
 						</c:forEach>
@@ -87,5 +88,20 @@
 		 </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<!-- Ajax发送请求删除文件  被上面调用 -->
+<script type="text/javascript">
+	var deleteFile = function(id){
+		$.ajax({
+			url:"${ctx}/storage/file/" +id, 
+			method:"DELETE",
+			success:function(){
+				//重新加载页面
+				window.location.reload();
+				//window.location.href = "${ctx}/storage/file";
+				// 还可以根据id删除一行记录
+			}
+		});
+	};
+</script>
 </body>
 </html> 
