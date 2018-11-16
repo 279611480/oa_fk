@@ -1,4 +1,4 @@
-package org.yun.storage.service.impl;
+	package org.yun.storage.service.impl;
 
 
 
@@ -85,7 +85,9 @@ public class StorageServiceImpl implements StorageService {
 		info.setUploadTime(new Date());
 		info.setPath(path);
 		//调用持久层方法保存  将文件传入进去
-		this.fileDao.save(info);
+		FileInfo fi  = this.fileDao.save(info);
+		//为了把id返回给控制器使用
+		info.setId(fi.getId());
 	}
 
 

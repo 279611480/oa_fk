@@ -7,6 +7,8 @@ import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.websocket.server.PathParam;
 
@@ -76,17 +78,51 @@ public class FileController {
 	public String upload(@RequestParam("file") MultipartFile file//
 			)//
 			throws IOException {
+		this.wangEditorUpload(file);
+		return "redirect:/storage/file";
+	}
+	
+	@PostMapping("wangEditor")
+	@ResponseBody
+	public WangEditorResponse wangEditorUpload(@RequestParam("file") MultipartFile file) throws IOException {
+		// 上传的代码、逻辑还是跟之前一样
 		FileInfo info = new FileInfo();
 		info.setContentType(file.getContentType());
 		info.setFileSize(file.getSize());
-		info.setName(file.getOriginalFilename());	
+ 		info.setName(file.getOriginalFilename());
+ 
+ 		try (InputStream in = file.getInputStream()) {
+			this.storageService.save(info, in);
+		}
+		//只是返回了一些内容
+		WangEditorResponse wangEditorResponse = new WangEditorResponse();
+		wangEditorResponse.setErrno(0);//成功
+		wangEditorResponse.getData().add("/storage/file/" + info.getId());//图片下载路径
+ 		return wangEditorResponse; 
 		
-		try(InputStream in = file.getInputStream()) {
-			this.storageService.save(info,in);
-		} 
-		
-		return "redirect:/storage/file";
 	}
+	//因为要返回JSON格式，不想去找插件  那就自己写
+	public static class WangEditorResponse{
+		private int errno;
+		
+		private List<String> data = new LinkedList<>();
+		
+		public int getErrno() {
+			return errno;
+		}
+		public void setErrno(int errno) {
+			this.errno = errno;
+		}
+		public List<String> getData() {
+			return data;
+		}
+		public void setData(List<String> data) {
+			this.data = data;
+		}
+		
+	}
+	
+	
 	
 	
 	@GetMapping("{id}")
