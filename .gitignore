@@ -24,7 +24,7 @@ hs_err_pid*
 
 
 
-#  提交忽略文件
+# 不要 提交的忽略文件
 /target/
 .target/*
 /settings/

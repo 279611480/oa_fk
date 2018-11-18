@@ -99,7 +99,7 @@
 			</div>
 			<div class="col-sm-12 col-md-8 role-form">
 				<!-- 角色修改的表单 -->
-				<form class="" method="post" class="form-horizontal">
+				<form action="" method="post" class="form-horizontal">
 					<input type="hidden" name="id" /><!-- 传入  登录者的id  以方便做修改  但是不想让那个用户看见 -->
 					<input type="hidden" name="${_csrf.parameterName }" value="${_csrf.token }" />
 					<div class="col-sm-12 ">
