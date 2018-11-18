@@ -53,6 +53,21 @@ public class NoticeRead implements Serializable{
 	@JoinColumn(name="notice_id")	
 	private Notice notice;
 
+	/**
+	 * 增加构造器，解决之前，在公告首页  自己写查询语句的时候，需要按数组索引位置设置的问题
+	 * */
+	
+	public NoticeRead() {
+		
+	}
+	// 如果没有id、没有user、没有readTime，表示这个公告用户还未阅读
+	public NoticeRead(String id, Date readTime, Notice notice) {
+		super();
+		this.id = id;
+		this.readTime = readTime;
+		this.notice = notice;
+	}
+
 	public String getId() {
 		return id;
 	}

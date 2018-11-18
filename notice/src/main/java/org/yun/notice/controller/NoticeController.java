@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.yun.notice.domain.Notice;
+import org.yun.notice.domain.NoticeRead;
 import org.yun.notice.domain.NoticeType;
 import org.yun.notice.service.NoticeTypeService;
 
@@ -29,7 +30,7 @@ public class NoticeController {
 			) {
 		ModelAndView mav = new ModelAndView("/notice/index");
 		//设置公告页面分页标签与关键字搜索到公告首页去  调用公告类型服务层  根据传进去的页码数与关键字
-		Page<Notice> page = this.noticeTypeService.findNotices(number,keyword);
+		Page<NoticeRead> page = this.noticeTypeService.findNotices(number,keyword);
 		mav.addObject("page", page);
 		return mav;
 	}

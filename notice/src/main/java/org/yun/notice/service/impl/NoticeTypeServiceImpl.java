@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -14,8 +15,10 @@ import org.yun.identity.UserHolder;
 import org.yun.identity.domain.User;
 import org.yun.notice.domain.Notice;
 import org.yun.notice.domain.Notice.Status;
+import org.yun.notice.domain.NoticeRead;
 import org.yun.notice.domain.NoticeType;
 import org.yun.notice.repository.NoticeDao;
+import org.yun.notice.repository.NoticeReadDao;
 import org.yun.notice.repository.NoticeTypeDao;
 import org.yun.notice.service.NoticeTypeService;
 
@@ -28,7 +31,8 @@ public class NoticeTypeServiceImpl implements NoticeTypeService {
 	private NoticeTypeDao noticeTypeDao;
 	@Autowired
 	private NoticeDao noticeDao;
-	
+	@Autowired
+	private NoticeReadDao noticeReadDao;
 	
 	@Override
 	public List<NoticeType> findAllTypes() {
@@ -59,7 +63,7 @@ public class NoticeTypeServiceImpl implements NoticeTypeService {
 	public void write(Notice notice) {
 		//01填充字段    表示  全都是  公告一开始的状态
 		notice.setAuthor(UserHolder.get());//拿到当前用户【公告作者】
-		notice.setWirteTime(new Date());//公告撰写时间
+		notice.setWriteTime(new Date());//公告撰写时间
 		notice.setReleaseTime(null);//公告发布的时间
 		notice.setStatus(Status.DRAFT);//公告一开始就是草稿状态
 		if(StringUtils.isEmpty(notice.getId())) {
@@ -71,17 +75,33 @@ public class NoticeTypeServiceImpl implements NoticeTypeService {
 	}
 
 	@Override
-	public Page<Notice> findNotices(Integer number, String keyword) {
+	public Page<NoticeRead> findNotices(Integer number, String keyword) {
+		/**
+		 * 标题、撰写时间、作者都可以非常方便的查询出来，内容在列表显示的时候，不关心
+		 * 状态：草稿、发布、撤回
+		 * 还有一个特殊状态：不同的用户有阅读状态，  没有阅读且已经有发布的，使用粗体字显示
+		 * 
+		 * 要查询的列表数据就包括：
+		 * 1.当前用户写的，还未发布的
+		 * 2.已经发布、可以阅读，需要查询阅读状态，表关联查询
+		 * 3.已经撤回的，只有作则能够查看
+		 * */
+		
+		
 		//.公告页面  一般有 作者  以及页面一页可显示多少条数据
 		//01通过之前设置的UserHolder拿到当前用户【即作者】
 		User author = UserHolder.get();	
+		
 		//02.设置一页可显示多少条数据
 		Pageable pageable = PageRequest.of(number, 10);//第几页，显示多少条数据   其实就是 一页显示多少条数据
-		//03.设置，公告页面的情况
-		Page<Notice> page =this.noticeDao.findNotices(author,pageable);
 		
-		//处理关联查询
-		
+		//03.设置，公告页面的情况                如果没有阅读状态，那么也会有公告记录
+		//Page<Notice> page =this.noticeDao.findNotices(author,pageable);
+		Page<NoticeRead> dataPage = this.noticeReadDao.findNotices(author, author, pageable);
+		//集合接收，公告页面的内容          
+		List<NoticeRead> content = dataPage.getContent();
+		//处理关联查询                                        dataPage.getTotalElements()拿到页面的内容数据
+		Page<NoticeRead> page = new PageImpl<>(content,pageable,dataPage.getTotalElements());
 		return page;
 	}
 
