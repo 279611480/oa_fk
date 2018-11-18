@@ -66,7 +66,7 @@ public class Notice implements Serializable {
 	
 	//公告的撰写时间   
 	@Temporal(TemporalType.TIMESTAMP)//时间戳
-	private Date wirteTime;
+	private Date writeTime;
 	
 	//公告的发布时间，如果没有发布、还是草稿那么就没有发布时间 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -142,13 +142,16 @@ public class Notice implements Serializable {
 	}
 
 
-	public Date getWirteTime() {
-		return wirteTime;
+
+
+
+	public Date getWriteTime() {
+		return writeTime;
 	}
 
 
-	public void setWirteTime(Date wirteTime) {
-		this.wirteTime = wirteTime;
+	public void setWriteTime(Date writeTime) {
+		this.writeTime = writeTime;
 	}
 
 
