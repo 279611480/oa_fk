@@ -14,48 +14,83 @@
 		<div class="panel-heading">
 			编辑公告
 		</div>	
-		<div class="panel-body">
-			表单
-			标题、类型选择			
-			<div id="noticeContentEditor">
-			</div>	
-			
-			<input type="hidden" name="content" id="noticeContent" />
-			按钮，保存的时候，要有状态（草稿、已发布、已撤回），阅读的时候必须是【已发布】的才能阅读。
-		</div>
+		<form action="${ctx }/notice" onsubmit="return checkContent()" method="post" >
+			<div class="panel-body">
+				<input type="hidden" name="${_csrf.parameterName }" value="${_csrf.token }" />
+				<input type="hidden" name="id" value="${notice.id}"/><!-- 根据公告id  控制等层好做处理 -->
+					<div class="form-group">
+			   			<label for="inputTitle" class="col-sm-2 control-label">标题</label>
+						<div class="col-sm-10 ">
+							<input type="text" 
+								class="form-control" 
+					        	id="inputTitle" 
+					        	name="title"
+					        	required="required"
+					        	placeholder="公告标题"
+					        	value="${notice.title }"/>   	
+						</div>
+					</div>
+					<div class="form-group">
+			   			<label for="inputTitle" class="col-sm-2 control-label">类型</label>
+						<div class="col-sm-10 ">
+							<!-- 查询出来  公告的类型有哪些  forEach -->
+							<select name="type.id"
+								required="required"
+								class="form-control"
+							><!-- 遍历循环，如果说自己的公告类型Id与类型id匹配那么就查询出来，不然就不查 -->
+								<option value="">--请选择类型--</option>
+									<c:forEach items="${types}" var="t">
+										<option value="${t.id }" ${notice.type.id eq t.id ? 'selected="selected"' : '' }>${t.name }</option>
+									</c:forEach>
+							</select>
+							
+						</div>
+					</div>
+								
+				<div id="noticeContentEditor">${notice.content }</div>					
+				<input type="hidden" name="content" id="noticeContent" />
+			</div>
+			<div class="panel-footer text-right">
+				<button class="btn btn-primary">提交</button>
+			</div>
+		</form>
 	</div>
 </div>
 
 <script type="text/javascript" src="${ctx }/webjars/wangEditor/3.1.1/release/wangEditor.min.js"></script>
 <script type="text/javascript">
-    var E = window.wangEditor;
-    var editor = new E('#noticeContentEditor');
-    // 或者 var editor = new E( document.getElementById('editor') );
+    $(function(){
+    	var E = window.wangEditor;
+        var editor = new E('#noticeContentEditor');
+        // 或者 var editor = new E( document.getElementById('editor') );
+        
+        // 隐藏网络图片引用tab
+        //editor.customConfig.showLinkImg = false;
+        
+        // 显示图片上传的tab
+        editor.customConfig.uploadImgServer = '${ctx}/storage/file/wangEditor';
+        // 上传的时候，文件的字段名
+        editor.customConfig.uploadFileName = 'file';
+        // 自定义上传的时候请求头内容
+        editor.customConfig.uploadImgHeaders = {
+       	    '${_csrf.headerName}': '${_csrf.token}'
+       	};
+        // 接收改变后的内容，获取富文本编辑器里面的内容，放到#noticeContent里面
+        editor.customConfig.onchange = function(html){
+        	$("#noticeContent").val(html);
+        };
+        // 粘贴图片
+        editor.customConfig.pasteIgnoreImg = false;
+        // 不要过滤复制内容的样式，保持原本的样式，可能有些时候不能完全得到样式，此时可以自定义外观（写CSS）
+        editor.customConfig.pasteFilterStyle = false;
+        
+        // 创建编辑器
+        editor.create();
+    });
+    	
+
     
-     // 隐藏网络图片引用tab
-    //editor.customConfig.showLinkImg = false;
-      
-     //显示图片上传的Tag
-     editor.customConfig.uploadImgServer = '${ctx}/storage/file/wangEditor';  // 上传图片到服务器
-    //上传的时候，文件的字段名
-    editor.customConfig.uploadFileName = 'file';
-    
-    // 自定义上传的时候请求头内容
-    editor.customConfig.uploadImgHeaders = {
-   	    '${_csrf.headerName}': '${_csrf.token}'
-   	};
-    
-    //接收改变后的内容，获取富文本编辑器里面的内容，放到#noticeContent
-    editor.customConfig.onchange = function(html){
-    	$("#noticeContent").val(html);
-    };
-    // 忽略粘贴内容中的图片   不忽略改为true即可
-    editor.customConfig.pasteIgnoreImg = true
-    // 不要过滤复制内容的样式，保持原本的样式，可能有些时候不能完全得到样式，此时可以自定义外观（写CSS）
-    editor.customConfig.pasteFilterStyle = false;
-    
-    // 创建编辑器
-    editor.create();
+   
 </script>
 
 
