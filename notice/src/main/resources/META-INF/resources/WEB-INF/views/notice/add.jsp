@@ -48,7 +48,7 @@
 					</div>
 								
 				<div id="noticeContentEditor">${notice.content }</div>					
-				<input type="hidden" name="content" id="noticeContent" />
+				<textarea type="hidden" name="content" id="noticeContent" style="display: none;">${notice.content }</textarea>
 			</div>
 			<div class="panel-footer text-right">
 				<button class="btn btn-primary">提交</button>
@@ -87,7 +87,17 @@
         // 创建编辑器
         editor.create();
     });
-    	
+    //检查公告内容是否有输入
+    var checkContent = function(){
+    	//.trim()去掉前后空格
+    	var text = $("#noticeContentEditor").text().trim();
+    	if(text === ""){
+    		alert("公告内容必须填写");
+    		return false;
+    		
+    	}
+    	return true;
+    }
 
     
    
