@@ -18,6 +18,18 @@ public interface NoticeTypeService {
 	Page<NoticeRead> findNotices(Integer number, String keyword);//设置公告页面的分页标签   以及 公告页面的关键字搜索
 
 	void write(Notice notice);//将添加【保存】到的公告  写出来  显示在公告页面
+
+
+
+	void read(String id);
+
+	void deleteById(String id);
+
+	Notice findById(String id);
+
+	void publish(String id);
+
+	void recall(String id);
 	
 	
 	

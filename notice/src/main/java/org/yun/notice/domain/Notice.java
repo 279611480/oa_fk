@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -55,12 +56,12 @@ public class Notice implements Serializable {
 	private String title;
 	
 	//公告类型  公告可有多种类型（如：人事招聘，团队活动，文化交流等）
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="type_id")
 	private NoticeType type;
 	
 	//公告作者  多条公告可以是同一个作者发布的
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="author_user_id")
 	private User author;
 	

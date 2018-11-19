@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.yun.identity.UserHolder;
 import org.yun.identity.domain.User;
@@ -103,6 +104,63 @@ public class NoticeTypeServiceImpl implements NoticeTypeService {
 		//处理关联查询                                        dataPage.getTotalElements()拿到页面的内容数据
 		Page<NoticeRead> page = new PageImpl<>(content,pageable,dataPage.getTotalElements());
 		return page;
+	}
+
+
+
+	@Override
+	@Transactional
+	public void read(String id) {
+		//拿到用户 公告  阅读时间
+		User user = UserHolder.get();
+		Notice notice = this.findById(id);
+		Date readTime = new Date();
+		
+		NoticeRead  old = this.noticeReadDao.findByNoticeAndUser(notice,user);
+		
+		if(old== null) {
+			NoticeRead nr = new NoticeRead();
+			nr.setNotice(notice);
+			nr.setReadTime(readTime);
+			nr.setUser(user);
+			this.noticeReadDao.save(nr);
+		}
+		
+	}
+
+	@Override
+	public void deleteById(String id) {
+		Notice n = this.findById(id);
+		if(n!=null) {
+			this.noticeDao.delete(n);
+		}
+		
+	}
+
+	@Override
+	public Notice findById(String id) {
+		return this.noticeDao.findById(id).orElse(null);
+	}
+
+	@Override
+	@Transactional
+	public void publish(String id) {
+		Notice n = this.findById(id);
+		if(n!=null) {
+			n.setStatus(Status.RELEASED);
+			n.setReleaseTime(new Date());
+		}
+		
+	}
+
+	@Override
+	@Transactional
+	public void recall(String id) {
+		Notice n = this.findById(id);
+		if(n != null) {
+			n.setStatus(Status.RECALL);
+		}
+		
 	}
 
 
