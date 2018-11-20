@@ -5,20 +5,19 @@
     <artifactId>oa</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>layout</artifactId>
-  <description>页面布局，根据用户权限生成菜单</description>
-  
-  
+  <artifactId>human-resource</artifactId>
+  <description>人事管理模块，里面包括岗位、部门、员工、薪资统计</description>
+	
+	<!-- 加入必要模块，与依赖 -->
   <dependencies>
-  		
-  		<!-- 加入用户、角色模块，并且把关联的其它依赖加入进来 -->
-  		<dependency>
-  			<groupId>org.yun</groupId>
-  			<artifactId>menu</artifactId>
-  			<version>${project.version}</version>
-  		</dependency>
-  		
-  		<!-- 数据库驱动    要加进来因为  最新版本太高 电脑不支持-->
+  	
+  	<dependency>
+  		<groupId>org.yun</groupId>
+  		<artifactId>security</artifactId>
+  		<version>${project.version}</version>
+  	</dependency>
+ 
+  <!-- 数据库驱动    要加进来因为  最新版本太高 电脑不支持-->
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
@@ -27,19 +26,7 @@
 		</dependency>
   		
   		
-  		<!--使用 <scope>provided</scope> 的，都要加进来  不然找不到   -->
-		<!-- 加入用户、角色模块，并且把关联的其他依赖也加入 -->
-		<dependency>
-			<groupId>org.yun</groupId>
-			<artifactId>identity</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.yun</groupId>
-			<artifactId>data</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+  	
 		
 		<!-- 加入Servlet API的依赖 -->
 		<dependency>
@@ -57,7 +44,6 @@
 			<!-- 如果在mvn命令直接运行，该依赖也会加入类路径 -->
 			<scope>provided</scope>
 		</dependency>
-
 		<!-- 开发的时候使用的，用于自动部署、自动重启，修改的文件可以马上生效 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -66,17 +52,39 @@
 			<!-- 可选的，必须设置为true，才能实现热部署 -->
 			<optional>true</optional>
 		</dependency>
+		<!-- Spring Boot自动配置Spring Security -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+				
+		</dependency>
+		<!-- 加入Spring Security的单元测试框架，方便进行安全测试 -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+			
+		</dependency>
+		
+		<!-- <dependency>
+			<groupId>org.webjars.bower</groupId>
+			<artifactId>wangEditor</artifactId>
+			<version>3.1.1</version>
+		</dependency> -->
 		
 		
 		
 		
 	</dependencies>
   
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
+
+
+
 </project>
