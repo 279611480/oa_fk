@@ -47,9 +47,10 @@
 		<module>menu</module>
 		<module>layout</module>
 		<module>security</module>
-
+		
 		<module>storage</module>
 		<module>noticetype</module>
+
 		<module>human-resource</module>
 	</modules>
 </project>
