@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
-
+import org.yun.hr.domain.Department;
+import org.yun.hr.service.HumanResourceService;
 import org.yun.identity.domain.User;
 import org.yun.identity.service.IdentityService;
 
@@ -19,8 +21,8 @@ public class DepartmentController {
 	@Autowired
 	private IdentityService identityService;
 	
-//	@Autowired
-//	private HumanResourceService humanResourceService;
+	@Autowired
+	private HumanResourceService humanResourceService;
 	
 	@GetMapping
 	public ModelAndView index() {
@@ -34,11 +36,11 @@ public class DepartmentController {
 	}
 	
 	//保存   调用人事服务层方法保存部门
-//	@PostMapping
-//	public String save(Department department) {
-//		this.humanResourceService.save(department);
-//		return "redirect:/human-resource/department";//重定向到部门首页
-//	}
+	@PostMapping
+	public String save(Department department) {
+		this.humanResourceService.save(department);
+		return "redirect:/human-resource/department";//重定向到部门首页
+	}
 	
 	
 	
