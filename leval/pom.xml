@@ -5,10 +5,11 @@
     <artifactId>oa</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>human-resource</artifactId>
-  <description>人事管理模块，里面包括岗位、部门、员工、薪资统计</description>
-	
-	<!-- 加入必要模块，与依赖 -->
+  <artifactId>leave</artifactId>
+  <description>这是请假模块</description>
+
+ 
+  <!-- 加入必要模块，与依赖 -->
   <dependencies>
   	
   	<dependency>

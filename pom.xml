@@ -51,6 +51,10 @@
 		<module>storage</module>
 		<module>noticetype</module>
 
+
 		<module>human-resource</module>
+
+		<module>leave</module>
+
 	</modules>
 </project>
