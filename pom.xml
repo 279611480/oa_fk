@@ -50,5 +50,6 @@
 
 		<module>storage</module>
 		<module>noticetype</module>
+		<module>leave</module>
 	</modules>
 </project>
