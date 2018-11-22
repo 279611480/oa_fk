@@ -196,6 +196,23 @@ $(document).ready(function() {
 	$.fn.zTree.init($("#departmentTree"), setting);
 
 	$(".reset-button").click(resetForm);
-
-
+	
+	/*处理部门经理选择的自动完成*/
+//	$('#selectManager').autocomplete({
+//		serviceUrl : contextPath + '/identity/user',//接收请求的URL
+//		dataType : "json",//返回的参数格式  需要返回Json格式的数据
+//		onSelect : function(suggestion){//suggestion   响应的数据
+//			//当选择某个选项时要执行的回调，需要把用户的Id存储到表单里面
+//			$('#managerUserId').val(suggestion.user.id);//id是页面上  隐藏的
+//		}	
+//		
+//	});
+	$('#selectManager').autocomplete({
+		serviceUrl : contextPath + '/identity/user',
+		dataType : "json",// 返回JSON
+		onSelect : function(suggestion) {
+			// 当选中某个选项的时候要执行的回调，需要把用户的ID存储到表单里面
+			$("#managerUserId").val( suggestion.user.id );
+		}
+	});
 });

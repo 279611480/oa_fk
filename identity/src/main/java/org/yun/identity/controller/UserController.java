@@ -1,6 +1,7 @@
 package org.yun.identity.controller;
 
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
@@ -47,6 +49,67 @@ public class UserController {
 		return mav;
 		
 	}
+	
+	@GetMapping(produces="application/json")
+	@ResponseBody
+	public AutoCompleteResponse likeName(//调用下面自己定义的类【响应类】   AutoCompleteResponse
+			@RequestParam(name="query")String keyword //搜索的关键字     接收页面上传过来的关键字
+			) {
+		List<User> users =identityService.findUsers(keyword);
+		List<User> result = new LinkedList<>();
+		users.forEach(user->{
+			User u = new User();
+			u.setId(user.getId());
+			u.setName(user.getName());
+			result.add(u);			
+		});
+		return new AutoCompleteResponse(result);
+	}
+	/**
+	 * 自动完成的响应对象  被上面调用
+	 * 里面有响应的参数List集合
+	 * 遍历循环
+	 * 创建一个响应参数的对象，将其添加到响应参数里面去
+	 * 提供get方法拿到响应参数的集合
+	 * */
+	public static class AutoCompleteResponse{
+		//创建响应参数的集合
+		private List<AutoCompleteItem> suggestions; //调用下面自己定义的AutoCompleteItem
+		//创建构造器，以便被上面里面   创建对象  【自动响应参数的对象】
+		public AutoCompleteResponse(List<User> users) {//此处要做的是响应数据库 的用户出去   因为是选择部门经理
+			super();
+			this.suggestions = new LinkedList<>();
+			users.forEach(u -> {
+				AutoCompleteItem item = new AutoCompleteItem(u);
+				this.suggestions.add(item);
+			});
+		}
+		public List<AutoCompleteItem> getSuggestions() {
+			return suggestions;
+		}
+
+	}
+
+	/**
+	 * 创建AutoComplete被上面调用的been对象
+	 * */
+	public static class AutoCompleteItem {
+		private User user;
+		private String value;
+		public AutoCompleteItem(User user) {
+			super();
+			this.user = user;
+			this.value = user.getName();
+		}
+		public User getUser() {
+			return user;
+		}
+		public String getValue() {
+			return value;
+		}
+	}
+	
+	
 	
 	@GetMapping("/add")//接收页面上的操作 （处理）  添加
 	public ModelAndView add() {

@@ -41,6 +41,7 @@ public class Department implements Serializable {
 	 * */
 	@ManyToOne
 	@JoinColumn(name="parent_id")
+	@JsonIgnore/**防止数据库死循环   所以使用这个注解*/
 	private Department parent;
 	
 	/**

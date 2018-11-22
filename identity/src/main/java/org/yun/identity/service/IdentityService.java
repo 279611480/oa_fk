@@ -1,5 +1,6 @@
 package org.yun.identity.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -21,6 +22,8 @@ public interface IdentityService {
 
 
 	Optional<User> findByLoginName(String loginName);
+
+	List<User> findUsers(String keyword);
 
 
 	
