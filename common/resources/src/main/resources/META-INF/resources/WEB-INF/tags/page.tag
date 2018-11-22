@@ -20,7 +20,7 @@
 <nav aria-label="分页导航">
     <ul class="pagination">
         <li><!-- 设置上一页 -->
-            <a href="${url }&pageNumber=${page.number eq 0 ? 0 : page.number - 1}" aria-label="上一页">
+            <a href="${url }${page.number eq 0 ? 0 : page.number - 1}" aria-label="上一页">
                 <span aria-hidden="true">&laquo;</span>
             </a>
         </li>
@@ -45,7 +45,7 @@
         	<li class="${page.number eq number ? 'active' : '' }"><a href="${url }${number}">${number + 1 }</a></li>
         </c:forEach>
         <li><!-- 设置下一页 -->
-            <a href="${url }&pageNumber=${page.number ge (page.totalPages - 1) ? page.totalPages - 1 : page.number + 1}" aria-label="下一页">
+            <a href="${url }${page.number ge (page.totalPages - 1) ? page.totalPages - 1 : page.number + 1}" aria-label="下一页">
                 <span aria-hidden="true">&raquo;</span>
             </a>
         </li>
