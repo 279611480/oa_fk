@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -35,6 +36,7 @@ import org.yun.menu.service.MenuService;
 import org.yun.security.domain.UserDetails;
 import org.yun.security.interceptors.UserHolderInterceptors;
 import org.yun.security.service.SecurityService;
+import org.yun.security.service.impl.MyAccessControl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -158,10 +160,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 		//登录页面的地址和其他的静态页面都不要权限
 		// /*表示目录下的任何地址，但是不包括子目录
 		// /**则是连子目录都一起匹配
-		.antMatchers(loginPage, "/css/**", "/js/**", "/webjars/**", "/static/**")//
+		.antMatchers(loginPage, "/","/index", "/images/**","/error/**", "/layout/ex", "/css/**", "/zTree/**", "/js/**", "/webjars/**",
+				"/static/**")//
 		.permitAll()// 不做访问判断
 		.anyRequest()// 所有请求
-		.authenticated()// 授权以后才能访问
+		//.authenticated()// 授权以后才能访问
+		.access("@myAccessControl.check(authentication,request)")	
+
 		.and()// 并且
 		.formLogin()// 使用表单进行登录
 		.loginPage(loginPage)// 登录页面的位置，默认是/login
@@ -199,7 +204,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 	 * 当控制器，只有一行代码，用于返回一个页面的时候，不需要写控制器
 	 * 直接注册一个【资源处理器】即可
 	 * */
-	@Override
+	@Override	
 	public void addViewControllers(ViewControllerRegistry registry) {
 		//动态注册URL和视图的映射关闭，解决控制器里面几乎没有代码的问题
 		registry.addViewController("/security/login")//接收浏览器（URL）传过来的请求
@@ -212,7 +217,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 		
 		
 	}
-
+	
+	@Bean
+	public MyAccessControl myAccessControl(){
+		return new MyAccessControl();
+	}
+	
+	
 	public static void main(String[] args) {
 		SpringApplication.run(SecurityConfig.class, args);//运行main方法   开启  TomCate  
 	}
