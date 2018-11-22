@@ -38,7 +38,7 @@ $(document).ready(function(){
 				
 	// <li><a href="index.html#">二级菜单</a></li>    显示数据库中二级菜单的内容			
 				for(var j=0;j<menu.children.length;j++){
-					var item = `<li><a href="${menu.children[j].url}">${menu.children[j].name}</a></li>`;
+					var item = `<li><a href="${contextPath}${menu.children[j].url}">${menu.children[j].name}</a></li>`;
 					html += item; 
 				}
 				html += "</ul>";
@@ -48,6 +48,35 @@ $(document).ready(function(){
 				
 			}
 			
+			// 高亮显示当前菜单
+			// 1.获取当前的URL
+			var url = document.location.pathname;
+			//console.info(url);
+			// 2.获取所有的菜单链接（显示出来的）
+			var lis = $(".nav-sidebar li");//见36行
+			// 排序
+//			$(lis).each(function(){
+//				console.info($("a", $(this)).attr("href"));
+//			});
+			lis.sort(function(li1, li2){
+				// 长度优先，比较长的放前面
+				return $("a", li2).attr("href").length - $("a", li1).attr("href").length ; 
+			});
+//			console.info("-----------------------");
+//			$(lis).each(function(){
+//				console.info($("a", $(this)).attr("href"));
+//			});
+			// 3.给匹配的URL的li增加class='active'
+			for( var i = 0; i < lis.length; i++){
+				var li = lis[i];
+				var href = $("a", $(li)).attr("href");
+				
+				// href是左侧菜单，比较短，url可能还包含路径参数
+				if( url.startsWith(href) ){
+					$(li).addClass("active");
+					break;
+				}
+			}
 		},
 		error:function(data,status,xhr){
 			//弹出错误信息
