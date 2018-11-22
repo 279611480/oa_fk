@@ -34,7 +34,9 @@ public interface MenuDao extends JpaRepository<Menu,String> {
 
 	Page<Menu> findByParentAndNumberGreaterThanOrderByNumberAsc(Menu parent, Double number, Pageable pageable);
 
-	List<Menu> findByRolesIn(List<Role> roles);
+	
+
+	List<Menu> findDistinctByRolesIn(List<Role> roles);
 
 	
 	

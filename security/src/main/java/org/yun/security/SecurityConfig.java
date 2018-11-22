@@ -2,31 +2,42 @@ package org.yun.security;
 
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
 import org.springframework.context.annotation.ComponentScan;
-
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.yun.menu.domain.Menu;
+import org.yun.menu.service.MenuService;
+import org.yun.security.domain.UserDetails;
 import org.yun.security.interceptors.UserHolderInterceptors;
 import org.yun.security.service.SecurityService;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 @SpringBootApplication//使用SpringBoot自带的Tomcate
@@ -36,13 +47,21 @@ import org.yun.security.service.SecurityService;
 //WebSecurityConfigurerAdapter implements WebMvcConfigurer
 public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
-	
+	private static final Logger LOG = LoggerFactory.getLogger(SecurityConfig.class);
 	
 	
 	@Autowired
 	private SecurityService securityService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private MenuService menuService;
+	//Spring Boot里面已经配置好了ObjectMapper
+	//没有SpringBoot则需要手动加入Spring MVC里面
+	@Autowired
+	private ObjectMapper objectMapper;
+	
 	
 	//自定义	AuthenticationProvider，不隐藏【用户未找到异常】
 	//Spring Security会默认自动创建AuthenticationProvider
@@ -102,6 +121,38 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 		};
 		
 		
+		SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler() {
+			@Override
+			public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+					Authentication authentication) throws IOException, ServletException {//authentication证明/鉴定
+				// 拿到session				
+				HttpSession session = request.getSession();
+				//authentication  鉴定/证明	
+				UserDetails userDetails = (UserDetails) authentication.getPrincipal();//查找数据库有没有对应权利查看某模块
+				
+				//获取用户有权访问的URL
+				Set<String> urls = menuService.findMyUrls(userDetails.getUserId());
+				//获取用户左侧的菜单树
+				List<Menu> menus = menuService.findMyMenus(userDetails.getUserId());
+				
+				// 尝试转换所有菜单为JSON，为了避免每次访问生成一次
+				String menusJson;
+				try {
+					menusJson = objectMapper.writeValueAsString(menus);
+				} catch (JsonProcessingException e) {
+					LOG.error("无法把用户的菜单转换为JSON: " + e.getLocalizedMessage(), e);
+					menusJson = "[]";
+				}
+				// 用户的菜单存储到Session里面
+				session.setAttribute("menusJson", menusJson);
+				session.setAttribute("urls", urls);
+				
+				// 执行默认的登录成功操作
+				super.onAuthenticationSuccess(request, response, authentication);
+			}
+		};
+	
+		
 		
 		http.authorizeRequests()//验证请求
 		//登录页面的地址和其他的静态页面都不要权限
@@ -117,7 +168,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 		// 此页面不需要有对应的JSP，而且也不需要有对应代码，只要URL
 		// 这个URL是Spring Security使用的，用来接收请求参数、调用Spring Security的鉴权模块
 		.loginProcessingUrl("/security/do-login")// 处理登录请求的URL
-		
+		.successHandler(successHandler)//登录成功以后的处理器
 		//在登录成功以后，会判断Session里面是否有记录之前的URL，如果有则使用之前的URL继续访问
 		//如果没有则使用defaultSuccessUrl
 		//.defaultSuccessUrl("/index")//默认登录的页面

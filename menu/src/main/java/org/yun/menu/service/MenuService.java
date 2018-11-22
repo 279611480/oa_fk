@@ -1,6 +1,7 @@
 package org.yun.menu.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.yun.common.data.domain.Result;
 import org.yun.menu.domain.Menu;
@@ -15,7 +16,10 @@ public interface MenuService {
 
 	Result delete(String id);
 
-	List<Menu> finMyMenus();
+	
+	Set<String> findMyUrls(String userId);
+
+	List<Menu> findMyMenus(String userId);
 
 
 	
