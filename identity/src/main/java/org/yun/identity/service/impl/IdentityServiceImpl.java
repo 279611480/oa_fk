@@ -163,7 +163,7 @@ public class IdentityServiceImpl implements IdentityService {
 			keyword =null;
 		}
 		//分页条件
-		Pageable pageable = PageRequest.of(0, size); //使用Spring自己提供的Pageable实现分页
+		Pageable pageable = PageRequest.of(number, size); //使用Spring自己提供的Pageable实现分页
 		
 		Page<User> page;
 		
