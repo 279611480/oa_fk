@@ -66,12 +66,23 @@
 			
 		</dependency>
 		
-		<!-- <dependency>
-			<groupId>org.webjars.bower</groupId>
-			<artifactId>wangEditor</artifactId>
-			<version>3.1.1</version>
-		</dependency> -->
+				<!-- <dependency> -->
+		<!-- <groupId>org.webjars.npm</groupId> -->
+		<!-- <artifactId>bootstrap-select</artifactId> -->
+		<!-- <version>1.13.2</version> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.webjars.bower</groupId> -->
+		<!-- <artifactId>ajax-bootstrap-select</artifactId> -->
+		<!-- <version>1.4.4</version> -->
+		<!-- </dependency> -->
 		
+		<!-- 关键字搜索 -->
+		<dependency>
+			<groupId>org.webjars.bower</groupId>
+			<artifactId>devbridge-autocomplete</artifactId>
+			<version>1.4.8</version>
+		</dependency>
 		
 		
 		

@@ -150,11 +150,20 @@ public class IdentityServiceImpl implements IdentityService {
 
 	@Override
 	public Page<User> findUsers(String keyword, Integer number) {
+		
+		//分页条件
+		Page<User> page = this.findUsers(keyword,number, 4); //使用Spring自己提供的Pageable实现分页
+		return page;
+	}
+	/***
+	 * 重构重复代码
+	 * */
+	private Page<User> findUsers(String keyword, Integer number,Integer size) {
 		if(StringUtils.isEmpty(keyword)) {
 			keyword =null;
 		}
 		//分页条件
-		Pageable pageable = PageRequest.of(number, 4); //使用Spring自己提供的Pageable实现分页
+		Pageable pageable = PageRequest.of(0, size); //使用Spring自己提供的Pageable实现分页
 		
 		Page<User> page;
 		
@@ -166,8 +175,9 @@ public class IdentityServiceImpl implements IdentityService {
 			page = userDao.findByNameContaining(keyword,pageable);
 		}
 		return page;
-		
 	}
+	
+	
 	
 	@Override
 	public User findUserById(String id) {
@@ -222,6 +232,12 @@ public class IdentityServiceImpl implements IdentityService {
 		Optional<User> op = Optional.ofNullable(user);
 		return op;
 		
+	}
+
+	@Override
+	public List<User> findUsers(String keyword) {
+		Page<User> page = this.findUsers(keyword, 0, 50);//关键字搜索，最多显示50条数据
+		return page.getContent();
 	}
 
 

@@ -55,14 +55,15 @@
 						<div class="form-group">
 						    <label for="selectManager" class="col-sm-2 control-label">部门经理</label>
 						    <div class="col-sm-10">
-						        <select name="manager.user.id"
-						        	class="form-control"
-						        	id="selectManager" >
-						        	<%-- 后面是要改为AJAX，并且配合bootstrap-select --%>
-						        	<c:forEach items="${user }" var="u">
-						        		<option value="${u.id }">${u.name }</option>
-						        	</c:forEach>
-						        </select>
+						        <input type="text"
+						        	   class="form-control" 
+						        	   id="selectManager"/>
+
+						        <input type="hidden"
+						        	   id="managerUserId"
+						        	   name="manager.user.id"/>
+						        
+						        
 						    </div>
 						</div>
 					</div>
@@ -75,6 +76,7 @@
 		</div>
 	</div>
 </div>
+<script type="text/javascript" src="${ctx }/webjars/devbridge-autocomplete/1.4.8/dist/jquery.autocomplete.min.js"></script> 
 <script type="text/javascript" src="${ctx }/js/department.js"></script>
 </body>
 </html> 
