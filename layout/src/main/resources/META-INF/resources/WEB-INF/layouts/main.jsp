@@ -27,9 +27,8 @@
 	
 	<script type="text/javascript" src="${ctx }/static/js/yun.js"></script>
 	<sitemesh:write property="head"/> 
-		<script type="text/javascript">
-		var contextPath="${ctx}";
-				
+	<script type="text/javascript">
+		var contextPath="${ctx}";		
 	</script>
 	
   </head>

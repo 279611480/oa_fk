@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.yun.hr.domain.Department;
 import org.yun.hr.service.HumanResourceService;
@@ -34,6 +35,15 @@ public class DepartmentController {
 		mav.addObject("user",user);
 		return mav;
 	}
+	
+	//调用服务层方法，查询上级部门  用List集合接收
+	//如果客户端，要求返回JSON的时候，调用下面这个方法
+	@GetMapping(produces="application/json")
+	@ResponseBody
+	public List<Department> findTopDepartments(){
+		return this.humanResourceService.findTopDepartments();
+	}
+	
 	
 	//保存   调用人事服务层方法保存部门
 	@PostMapping

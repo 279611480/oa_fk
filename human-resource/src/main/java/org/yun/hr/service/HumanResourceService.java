@@ -1,5 +1,7 @@
 package org.yun.hr.service;
 
+import java.util.List;
+
 import org.yun.hr.domain.Department;
 
 public interface HumanResourceService {
@@ -9,6 +11,8 @@ public interface HumanResourceService {
 	 * @param department
 	 */
 	void save(Department department);
+
+	List<Department> findTopDepartments();
 	
 	
 	

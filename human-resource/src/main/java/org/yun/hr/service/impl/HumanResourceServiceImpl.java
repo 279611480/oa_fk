@@ -1,5 +1,7 @@
 package org.yun.hr.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -108,6 +110,12 @@ public class HumanResourceServiceImpl implements HumanResourceService {
 			department.setNumber(number);
 		}
 		this.departmentDao.save(department);
+	}
+
+	//调用持久层方法查询出上级部门为空且根据序列号排序
+	@Override
+	public List<Department> findTopDepartments() {
+		return this.departmentDao.findByParentNullOrderByNumber();
 	}
 	
 }
