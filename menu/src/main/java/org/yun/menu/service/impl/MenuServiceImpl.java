@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -290,12 +290,13 @@ public class MenuServiceImpl implements MenuService {
 	}
 
 	@Override
-	public List<Menu> finMyMenus() {
+	@Transactional(readOnly = true)
+	public List<Menu> findMyMenus(String userId) {
 		//拿到从线程里面的User是瞬态的，不是持久化状态的
-		User user = UserHolder.get();
+		//User user = UserHolder.get();
 		//拿到持久化状态的User
 		//【调用用户持久层.getOne()方法,将上面拿到的user传入当做参数，查询数据库有没有对应的user】
-		user = userDao.getOne(user.getId());
+		User user = userDao.getOne(userId);
 		//持久化状态user，调用方法拿到所有角色【因为可能传入不同的用户，找到它们所对应的角色】
 		//， 拿个list集合接收
 		List<Role> roles = user.getRoles();
@@ -306,15 +307,15 @@ public class MenuServiceImpl implements MenuService {
 		 *左侧的菜单树，其实只要两级（一级、二级）即可，并且应该返回一级、在一级里面包含二级
 		 *1.根据	角色，查询到所有的（对应的）菜单	 【调用菜单持久层方法查询角色In】
 		 * */
-		List<Menu> menus = this.menuDao.findByRolesIn(roles);//使用in查询
+		List<Menu> menus = this.menuDao.findDistinctByRolesIn(roles);// 使用in查询
 		
-		
-		Set<Menu> set = new HashSet<>();
-		menus.forEach(m->{
-			set.add(m);
-		});
-		menus.clear();
-		menus.addAll(set);
+		//去重第二种方式
+//		Set<Menu> set = new HashSet<>();   
+//		menus.forEach(m->{
+//			set.add(m);
+//		});
+//		menus.clear();
+//		menus.addAll(set);
 		//DistinctMenu
 		/**创建一个LinkList集合  接收，准备返回的一级菜单*/
 		List<Menu> topMenus = new LinkedList<>();
@@ -385,10 +386,10 @@ public class MenuServiceImpl implements MenuService {
 								//把一级菜单加入返回的集合里面去
 								topMenus.add(menu);	
 							});	
-			//排序一级菜单
-			topMenus.sort(comparator);
-			//返回的菜单集合			
-			return topMenus;
+			// 排序一级菜单
+	 		topMenus.sort(comparator);
+	 
+	 		return topMenus;
 	}
 	/**
 	 * 提取出来的方法  被上面调用
@@ -408,4 +409,28 @@ public class MenuServiceImpl implements MenuService {
 		//返回瞬态对象
 		return menu;
 	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Set<String> findMyUrls(String userId) {
+		//调用用户持久层方法拿到用户
+		User user = userDao.getOne(userId);
+		//创建List集合接收用户的角色
+		List<Role> roles = user.getRoles();
+		//
+		List<Menu> menus = this.menuDao.findDistinctByRolesIn(roles);// 使用in查询
+		
+		Set<String> urls = new HashSet<>();
+		menus.forEach(menu->{
+			urls.add(menu.getUrl());
+		});
+		
+		return urls;
+	}
+
+	
+		
+
+
+
 }

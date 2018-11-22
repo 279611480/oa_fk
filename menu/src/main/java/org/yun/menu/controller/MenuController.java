@@ -6,10 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import org.yun.common.data.domain.Result;
 import org.yun.identity.domain.Role;
@@ -20,6 +22,7 @@ import org.yun.menu.service.MenuService;
 //http://127.0.0.1:8080/menu
 @Controller
 @RequestMapping("/menu")
+@SessionAttributes("menusJson")//将用户每次访问生成的数据放到session里面去
 public class MenuController {
 	
 	@Autowired
@@ -76,20 +79,22 @@ public class MenuController {
 	}
 	
 	// 返回JSON，使用AJAX来获取
-	@GetMapping(value="menus",produces="application/json")
+	 /*@GetMapping(value="menus",produces="application/json")
 	@ResponseBody
-	 public List<Menu> findMyMenus(){
+	public List<Menu> findMyMenus(){
 		//找当前的用户
+		TODO 当前暂时没有用户，所以直接查询所有菜单
+		return this.menuService.findTopMenus();
 		
-		
-		/*TODO 当前暂时没有用户，所以直接查询所有菜单
-		return this.menuService.findTopMenus();*/
-		
-		/**现在已经拿到登录用户的user信息，传到线程里面，
-		 * 可以拿到用户信息了  所以该实现对应用户，的所拥有的角色了*/
+		***现在已经拿到登录用户的user信息，传到线程里面，
+		 * 可以拿到用户信息了  所以该实现对应用户，的所拥有的角色了
 		return this.menuService.finMyMenus();
+	}*/
 	
-	
+	// 返回JSON，使用AJAX来获取
+	@GetMapping(value = "menus", produces = "application/json")
+	@ResponseBody
+	public String findMyMenus(@ModelAttribute("menusJson") String menusJson) {
+		return menusJson;
 	}
-	
 }
