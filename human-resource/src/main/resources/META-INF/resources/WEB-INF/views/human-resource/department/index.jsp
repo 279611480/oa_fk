@@ -19,9 +19,7 @@
 		<!-- Default panel contents -->
 		<div class="panel-heading">
 			部门管理
-			<div class="close">
-				<a class="btn btn-default">新增</a>
-			</div>
+
 		</div>
 		<div class="panel-body">
 			<div class="col-xs-12 col-sm-4 tree-container">
