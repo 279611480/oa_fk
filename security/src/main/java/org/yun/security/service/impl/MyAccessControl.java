@@ -46,9 +46,9 @@ public class MyAccessControl {
 				return true;
 			}
 			
-//			if(requestUrl.contains(url)) {
-//				return true;
-//			}
+			if(requestUrl.contains(url)) {
+				return true;
+			}
 			
 		}
 		LOG.trace("访问被拒绝，访问Url:{},用户的Url集合",requestUrl,urls);
