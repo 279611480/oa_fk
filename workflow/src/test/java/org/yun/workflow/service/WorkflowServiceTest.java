@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -27,6 +29,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.yun.common.data.domain.Result;
 import org.yun.workflow.WorkflowConfig;
+import org.yun.workflow.vo.ProcessForm;
 
 
 @RunWith(SpringRunner.class)//注解（表示  使用test测试框架）
@@ -55,7 +58,8 @@ public class WorkflowServiceTest extends AbstractJUnit4SpringContextTests {//继
 			Result result = this.workflowService.deploy(name, in);
 			Assert.assertEquals(Result.CODE_OK, result.getCode());
 		}
-		ProcessDefinition definition = this.workflowService.findDefinitionByKey(name);
+		ProcessForm form = this.workflowService.findDefinitionByKey(name);
+		ProcessDefinition definition = form.getDefinition();
 		if(definition != null) {
 			processDefinitionId = definition.getId();	
 		}
@@ -106,15 +110,26 @@ public class WorkflowServiceTest extends AbstractJUnit4SpringContextTests {//继
 		
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	@Test
+	public void start() {
+		String key ="HelloWorld";
+		//把表单显示在页面，然后页面填写完成以后，提交到控制器。有控制器启动调用业务逻辑启动实例
+		//一个流程定义，有很多的流程实例
+		ProcessForm form = this.workflowService.findDefinitionByKey(key);
+		Assert.assertNotNull(form);
+		
+		//启动流程实例
+		//用户填写的数据，没有流程都不同，所以此时只能获取所有的请求参数，交给业务逻辑层的统一代码去处理
+		//request.getParameterMap()返回一个Map，现在这里模拟一个
+		Map<String, String[]> params = new HashMap<>();
+		//根据流程定义的Id来启动流程实例
+		String processDefinitionId = form.getDefinition().getId();
+		System.out.println("开始启动流程实例");
+		Result result = this.workflowService.start(processDefinitionId,params);
+		System.out.println("流程实例启动结束");
+		Assert.assertNotNull(result);
+		Assert.assertEquals(Result.CODE_OK, result.getCode());
+	}
 	
 	
 }

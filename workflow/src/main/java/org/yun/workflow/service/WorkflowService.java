@@ -1,10 +1,12 @@
 package org.yun.workflow.service;
 
 import java.io.InputStream;
+import java.util.Map;
 
 import org.activiti.engine.repository.ProcessDefinition;
 import org.springframework.data.domain.Page;
 import org.yun.common.data.domain.Result;
+import org.yun.workflow.vo.ProcessForm;
 
 public interface WorkflowService {
 	
@@ -21,6 +23,8 @@ public interface WorkflowService {
 	
 	void activeProcessDefinition(String processDefinitionId);
 	
-	ProcessDefinition findDefinitionByKey(String key);
+	ProcessForm findDefinitionByKey(String key);
+
+	Result start(String processDefinitionId, Map<String, String[]> params);
 	
 }
