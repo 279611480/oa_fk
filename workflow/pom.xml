@@ -8,6 +8,17 @@
   <artifactId>workflow</artifactId>
   
   <dependencies>
+  		<dependency>
+  			<!-- 继承此模块 只为了其中的Result  作为返回状态 -->
+			<groupId>org.yun.common</groupId>
+			<artifactId>data</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<!-- 为了它里面自带的分页 -->
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-commons</artifactId>
+		</dependency>
 		<!-- 流程引擎和Spring集成的包 -->
 		<dependency>
 			<groupId>org.activiti</groupId>
