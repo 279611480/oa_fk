@@ -36,19 +36,12 @@ public class WorkflowServiceTest extends AbstractJUnit4SpringContextTests {//继
 	//自动注入  服务层接口
 	@Autowired
 	private WorkflowService workflowService;
+	
+	private String processDefinitionId;
 	//测试类   测试部署是否成功
-	/**
-	 * 加入  图名【就是   之前画图的类名】
-	 * 
-	 * 定义字节输出流
-	 * 定义Zip输出流  添加文件
-	 *  定义字节输入流（参数有输出）
-	 *  调用服务层方法将文件名以及输入流传进去
-	 * 断言，得到的结果编码是否为OK
-	 * @throws IOException 
-	 * @throws URISyntaxException 
-	 * */
-	@Test
+	//@Test
+	// 把准备数据的代码，放入Before里面，这样保证每个@Test都有一份新的数据
+	@Before
 	public void testDeploySuccess() throws IOException, URISyntaxException {
 		String name = "HelloWorld";
 		//把测试文件压缩起来，方便测试
@@ -62,14 +55,12 @@ public class WorkflowServiceTest extends AbstractJUnit4SpringContextTests {//继
 			Result result = this.workflowService.deploy(name, in);
 			Assert.assertEquals(Result.CODE_OK, result.getCode());
 		}
+		ProcessDefinition definition = this.workflowService.findDefinitionByKey(name);
+		if(definition != null) {
+			processDefinitionId = definition.getId();	
+		}
 	}
-	/**被上面调用
-	 * 添加方法  输出流以及名字传进去
-	 * 写一个文件的标志
-	 * 输出流传进去
-	 *写入内容  URL  以及文件  然后COPY
-	 *
-	 * */
+
 	private void addFile(ZipOutputStream out, String name) throws IOException, URISyntaxException {
 		// 写一个文件的标志
 		ZipEntry bpmn = new ZipEntry(name);
@@ -83,28 +74,14 @@ public class WorkflowServiceTest extends AbstractJUnit4SpringContextTests {//继
 	/**************查询流程定义列表  **************************/
 	@Test
 	public void testFindDefinitions() throws Exception {
-		//测试流程定义查询
-		/**定义关键字为Null   定义页码数为0【其实是第一页】  
-		 * 调用工作流服务层方法，根据传进去的关键字以及页码数  查询流程定义
-		 * 断言   页面是否不为空
-		 * 断言总记录数是否大于0
-		 * */
+		//测试流程定义查询		
 		String keyword = null;
 		int pageNumber =0;//第一页
 		Page<ProcessDefinition> page = this.workflowService.findDefinitions(keyword,pageNumber);
+		Assert.assertNotNull("必须要求返回一页数据", page);
+		Assert.assertEquals("预期要有数据，总记录数要大于0", true, page.getTotalElements() > 0);
 	}
 	/************** -禁用和激活  **************************/
-	String processDefinitionId;
-	
-	//直接查询一个流程定义来模拟，检查是否禁用成功
-	//@Test
-	@Before
-	public void findDefinitionByKey() {
-		String key = "HelloWorld";
-		ProcessDefinition definition = this.workflowService.findDefinitionByKey(key);
-		processDefinitionId = definition.getId();			
-	}
-	
 	//禁用及激活
 	@Test
 	public void disable() {

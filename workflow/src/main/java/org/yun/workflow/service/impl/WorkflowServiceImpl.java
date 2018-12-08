@@ -68,7 +68,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 		//当关键字不为null的时候，模糊查询关键字，查询对象调用流程查询名字模糊  将关键字传进去】
 		if(StringUtils.isEmpty(keyword)) {
 			//为空  表示 压根就没有 搜索  不理
-		}{
+		}else{
 			//不然的话，有在关键字查询，模糊查询
 			keyword = "%" + keyword +"%";
 			query.processDefinitionNameLike(keyword);
