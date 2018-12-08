@@ -86,6 +86,32 @@ public class WorkflowServiceImpl implements WorkflowService {
 		//返回page
 		return page;
 	}
+	@Override
+	public void disableProcessDefinition(String processDefinitionId) {
+		this.repositoryService.suspendProcessDefinitionById(processDefinitionId);
+		
+	}
+	@Override
+	public ProcessDefinition findDefinitionById(String processDefinitionId) {
+		return this.repositoryService.getProcessDefinition(processDefinitionId);
+	}
+	@Override
+	public void activeProcessDefinition(String processDefinitionId) {
+		this.repositoryService.activateProcessDefinitionById(processDefinitionId);
+		
+	}
+	@Override
+	public ProcessDefinition findDefinitionByKey(String key) {
+		//调用服务层方法，创建流程查询构建器
+		 ProcessDefinitionQuery query= this.repositoryService.createProcessDefinitionQuery();
+		//查询最后一个版本
+		query.latestVersion();
+		//以流程定义的KEY查询数据
+		query.processDefinitionKey(key);
+		//返回  单例结果
+		return query.singleResult();
+		
+	}
 	
 	
 	

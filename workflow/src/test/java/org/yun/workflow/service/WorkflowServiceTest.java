@@ -17,6 +17,7 @@ import org.activiti.bpmn.converter.util.BpmnXMLUtil;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ import org.yun.workflow.WorkflowConfig;
 
 @RunWith(SpringRunner.class)//注解（表示  使用test测试框架）
 @ContextConfiguration(classes= {WorkflowConfig.class})	//注解  加入配置信息
-public class WorkflowServiceTest {//继承无回滚事物【数据库会保存】extends AbstractJUnit4SpringContextTests
+public class WorkflowServiceTest extends AbstractJUnit4SpringContextTests {//继承无回滚事物【数据库会保存】extends AbstractJUnit4SpringContextTests
 	
 	//自动注入  服务层接口
 	@Autowired
@@ -93,4 +94,50 @@ public class WorkflowServiceTest {//继承无回滚事物【数据库会保存�
 		Page<ProcessDefinition> page = this.workflowService.findDefinitions(keyword,pageNumber);
 	}
 	/************** -禁用和激活  **************************/
+	String processDefinitionId;
+	
+	//直接查询一个流程定义来模拟，检查是否禁用成功
+	//@Test
+	@Before
+	public void findDefinitionByKey() {
+		String key = "HelloWorld";
+		ProcessDefinition definition = this.workflowService.findDefinitionByKey(key);
+		processDefinitionId = definition.getId();			
+	}
+	
+	//禁用及激活
+	@Test
+	public void disable() {
+		//禁用流程定义
+		//直接查询一个流程定义来模拟，检查是否禁用成功
+		// String processDefinitionId = "";
+		
+		//执行禁用
+		this.workflowService.disableProcessDefinition(processDefinitionId);
+		
+		//查询流程定义。检查是否禁用成功
+		ProcessDefinition definition=this.workflowService.findDefinitionById(processDefinitionId);
+		Assert.assertNotNull(definition);
+		Assert.assertEquals(true, definition.isSuspended());
+		
+		//执行激活
+		this.workflowService.activeProcessDefinition(processDefinitionId);
+		//查询流程定义，检查使用激活成功
+		definition = this.workflowService.findDefinitionById(processDefinitionId);
+		Assert.assertNotNull(definition);
+		Assert.assertEquals(false, definition.isSuspended());
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

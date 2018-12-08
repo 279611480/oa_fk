@@ -15,4 +15,12 @@ public interface WorkflowService {
 
 	Page<ProcessDefinition> findDefinitions(String keyword, int pageNumber);
 	
+	void disableProcessDefinition(String processDefinitionId);
+	
+	ProcessDefinition findDefinitionById(String processDefinitionId);
+	
+	void activeProcessDefinition(String processDefinitionId);
+	
+	ProcessDefinition findDefinitionByKey(String key);
+	
 }
