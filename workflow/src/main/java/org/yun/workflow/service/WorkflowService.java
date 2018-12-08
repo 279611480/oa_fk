@@ -1,0 +1,14 @@
+package org.yun.workflow.service;
+
+import java.io.InputStream;
+
+import org.yun.common.data.domain.Result;
+
+public interface WorkflowService {
+	
+	/*文件上传以后，会得到两个主要的信息：文件名、文件内容（InputStream）
+	 * 一般上传文件的时候，都直接使用ZIP格式压缩，所以部署的时候需要使用ZipInputStream解压缩
+	 * */
+	Result deploy(String name,InputStream in);
+	
+}
