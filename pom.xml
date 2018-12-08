@@ -56,5 +56,6 @@
 
 		<module>leave</module>
 
+		<module>workflow</module>
 	</modules>
 </project>
