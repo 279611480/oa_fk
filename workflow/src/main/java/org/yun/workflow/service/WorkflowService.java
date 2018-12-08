@@ -2,6 +2,8 @@ package org.yun.workflow.service;
 
 import java.io.InputStream;
 
+import org.activiti.engine.repository.ProcessDefinition;
+import org.springframework.data.domain.Page;
 import org.yun.common.data.domain.Result;
 
 public interface WorkflowService {
@@ -10,5 +12,7 @@ public interface WorkflowService {
 	 * 一般上传文件的时候，都直接使用ZIP格式压缩，所以部署的时候需要使用ZipInputStream解压缩
 	 * */
 	Result deploy(String name,InputStream in);
+
+	Page<ProcessDefinition> findDefinitions(String keyword, int pageNumber);
 	
 }

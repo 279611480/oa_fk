@@ -1,5 +1,7 @@
 package org.yun.workflow.service;
 
+import static org.junit.Assert.*;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -13,11 +15,14 @@ import java.util.zip.ZipOutputStream;
 
 import org.activiti.bpmn.converter.util.BpmnXMLUtil;
 import org.activiti.engine.RepositoryService;
+import org.activiti.engine.repository.ProcessDefinition;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.yun.common.data.domain.Result;
 import org.yun.workflow.WorkflowConfig;
@@ -25,7 +30,7 @@ import org.yun.workflow.WorkflowConfig;
 
 @RunWith(SpringRunner.class)//注解（表示  使用test测试框架）
 @ContextConfiguration(classes= {WorkflowConfig.class})	//注解  加入配置信息
-public class WorkflowServiceTest {
+public class WorkflowServiceTest {//继承无回滚事物【数据库会保存】extends AbstractJUnit4SpringContextTests
 	
 	//自动注入  服务层接口
 	@Autowired
@@ -57,6 +62,13 @@ public class WorkflowServiceTest {
 			Assert.assertEquals(Result.CODE_OK, result.getCode());
 		}
 	}
+	/**被上面调用
+	 * 添加方法  输出流以及名字传进去
+	 * 写一个文件的标志
+	 * 输出流传进去
+	 *写入内容  URL  以及文件  然后COPY
+	 *
+	 * */
 	private void addFile(ZipOutputStream out, String name) throws IOException, URISyntaxException {
 		// 写一个文件的标志
 		ZipEntry bpmn = new ZipEntry(name);
@@ -67,13 +79,18 @@ public class WorkflowServiceTest {
 		Files.copy(bpmnFile.toPath(), out);
 	}
 	
-	/**
-	 * 添加方法  输出流以及名字传进去
-	 * 写一个文件的标志
-	 * 输出流传进去
-	 *写入内容  URL  以及文件  然后COPY
-	 *
-	 * */
-	
-	
+	/**************查询流程定义列表  **************************/
+	@Test
+	public void testFindDefinitions() throws Exception {
+		//测试流程定义查询
+		/**定义关键字为Null   定义页码数为0【其实是第一页】  
+		 * 调用工作流服务层方法，根据传进去的关键字以及页码数  查询流程定义
+		 * 断言   页面是否不为空
+		 * 断言总记录数是否大于0
+		 * */
+		String keyword = null;
+		int pageNumber =0;//第一页
+		Page<ProcessDefinition> page = this.workflowService.findDefinitions(keyword,pageNumber);
+	}
+	/************** -禁用和激活  **************************/
 }
