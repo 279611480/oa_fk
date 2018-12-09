@@ -12,43 +12,20 @@ import org.activiti.engine.TaskService;
 import org.activiti.spring.ProcessEngineFactoryBean;
 import org.activiti.spring.SpringProcessEngineConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import com.mysql.cj.jdbc.Driver;
 
-@Configuration//如果要改为SpringBoot,只需要修改此行，然后加个main方法
+//@Configuration//如果要改为SpringBoot,只需要修改此行，然后加个main方法
+@SpringBootApplication
 @ComponentScan("org.yun")
 public class WorkflowConfig {
-//	xml<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" >
-//	  <property name="driverClassName" value="com.mysql.jdbc.Driver" />
-//	  <property name="url" value="jdbc:mysql://localhost:3306/activiti" />
-//	  <property name="username" value="activiti" />
-//	  <property name="password" value="activiti" />
-//	  <property name="defaultAutoCommit" value="false" />
-//	</bean>
 	
-	@Bean
-	public DataSource dataSource() {
-		SimpleDriverDataSource ds = new SimpleDriverDataSource();
-		ds.setDriverClass(Driver.class);
-		ds.setUrl("jdbc:mysql://127.0.0.1:3306/oa?useSSL=false&serverTimezone=UTC");
-		ds.setUsername("root");
-		ds.setPassword("1234");
-		return  ds;
-	}
-//	  <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-//    <property name="dataSource" ref="dataSource" />
-//  </bean>
-	@Bean
-	public PlatformTransactionManager transactionManager(@Autowired DataSource dataSource ) {
-		DataSourceTransactionManager tx = new DataSourceTransactionManager();
-		tx.setDataSource(dataSource);
-		return tx;
+	public static void main(String[] args) {
+		SpringApplication.run(WorkflowConfig.class, args);
 	}
 
 //	 <bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">

@@ -1,6 +1,5 @@
 package org.yun.workflow.service;
 
-import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
