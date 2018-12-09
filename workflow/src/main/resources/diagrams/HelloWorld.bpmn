@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="测试">
   <process id="HelloWorld" name="你好世界" isExecutable="true" activiti:candidateStarterUsers="YC，YUN">
+<<<<<<< HEAD
     <startEvent id="startHello" name="开启HelloWorld"></startEvent>
+=======
+    <startEvent id="startHello" name="开启HelloWorld" activiti:formKey="HelloWorld-task1.html"></startEvent>
+>>>>>>> refs/heads/人事管理
     <userTask id="usertask1" name="任务名称" activiti:assignee="用户1" activiti:formKey="HelloWorld-task1.html"></userTask>
     <sequenceFlow id="flow1" sourceRef="startHello" targetRef="usertask1"></sequenceFlow>
     <exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway" default="flow3"></exclusiveGateway>
+<<<<<<< HEAD
     <userTask id="usertask2" name="任务1" activiti:candidateUsers="用户2，用户3"></userTask>
     <userTask id="usertask3" name="任务2" activiti:candidateGroups="用户组1，用户组2"></userTask>
+=======
+    <userTask id="usertask2" name="任务1" activiti:candidateUsers="用户2,用户3"></userTask>
+    <userTask id="usertask3" name="任务2" activiti:candidateGroups="用户组1,用户组2"></userTask>
+>>>>>>> refs/heads/人事管理
     <sequenceFlow id="flow2" sourceRef="usertask1" targetRef="exclusivegateway1"></sequenceFlow>
     <sequenceFlow id="flow3" sourceRef="exclusivegateway1" targetRef="usertask2"></sequenceFlow>
     <sequenceFlow id="flow4" name="参数等于b的时候" sourceRef="exclusivegateway1" targetRef="usertask3">
