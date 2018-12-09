@@ -1,5 +1,7 @@
 package org.yun.workflow;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
 import org.activiti.engine.FormService;
@@ -9,6 +11,7 @@ import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.spring.ProcessEngineFactoryBean;
 import org.activiti.spring.SpringProcessEngineConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,18 +19,51 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.yun.security.domain.UserDetails;
+
 
 
 //@Configuration//如果要改为SpringBoot,只需要修改此行，然后加个main方法
 @SpringBootApplication
 @ComponentScan("org.yun")
-public class WorkflowConfig {
+public class WorkflowConfig implements WebMvcConfigurer {
 	
 	public static void main(String[] args) {
 		SpringApplication.run(WorkflowConfig.class, args);
 	}
 
+	
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		registry.addInterceptor(new HandlerInterceptor() {
+			@Override
+			public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+					throws Exception {
+				if(SecurityContextHolder
+						.getContext()
+						.getAuthentication() == null) {
+					return true;
+				}
+				Object principal =SecurityContextHolder//
+						.getContext()
+						.getAuthentication()
+						.getPrincipal();
+				if(principal instanceof UserDetails) {
+					UserDetails details = (UserDetails) principal;
+					String userId = details.getUserId();
+					Authentication.setAuthenticatedUserId(userId);
+				}
+				return HandlerInterceptor.super.preHandle(request, response, handler);
+			}
+		}).addPathPatterns("/**");
+	}
+	
+	
 //	 <bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
 //    <property name="dataSource" ref="dataSource" />
 //    <property name="transactionManager" ref="transactionManager" />
