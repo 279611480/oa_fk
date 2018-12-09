@@ -1,11 +1,17 @@
 package org.yun.workflow.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
+import org.yun.common.data.domain.Result;
 import org.yun.workflow.service.WorkflowService;
 import org.yun.workflow.vo.ProcessForm;
 
@@ -22,5 +28,24 @@ public class InstanceController {
 		mav.addObject("form",form);
 		return mav;
 	}
+	
+	@PostMapping("{id}")
+	public ModelAndView start(
+			@PathVariable("id") String processDefinitionId,
+			@RequestParam("processDefinitionKey") String processDefinitionKey,WebRequest request
+			) {
+		Map<String, String[]> params = request.getParameterMap();
+		Result result = this.workflowService.start(processDefinitionId, params);
+		if(result.getCode() == Result.CODE_OK) {
+			ModelAndView mav = new ModelAndView("redirect:/workflow/history/instance");
+			return mav;				
+		}else {
+			ModelAndView mav = this.start(processDefinitionKey);
+			mav.addObject("result",result);
+			return mav;
+		}
+		
+	}
+	
 	
 }
