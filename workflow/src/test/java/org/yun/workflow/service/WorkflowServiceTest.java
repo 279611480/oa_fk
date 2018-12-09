@@ -57,6 +57,7 @@ public class WorkflowServiceTest extends AbstractJUnit4SpringContextTests {//继
 		try(ZipOutputStream out = new ZipOutputStream(outputStream);){
 			this.addFile(out,name+".bpmn");
 			this.addFile(out, name + ".png");
+			this.addFile(out, name+"-task1.html");
 		}
 		try(InputStream in = new ByteArrayInputStream(outputStream.toByteArray())){
 			Result result = this.workflowService.deploy(name, in);
@@ -164,6 +165,28 @@ public class WorkflowServiceTest extends AbstractJUnit4SpringContextTests {//继
 		Page<TaskForm> page = this.workflowService.findTasks(keyword,null,pageNumber);
 		Assert.assertNotNull(page);
 		Assert.assertTrue("必须要有数据",page.getTotalElements()>0);
+	}
+	
+	//打开待办
+	@Test
+	public void findTask() {
+		//启动
+		start();//启动一个流程实例，用来测试待办任务
+		//定义关键字  以及  页码   页面，调用服务层方法 根据传进去的关键字 流程实例id 页码  查询Tasks
+		//断言页面不为空  总记录数大于0
+		String keyword =null;
+		int pageNumber = 0;
+		Page<TaskForm> page = this.workflowService.findTasks(keyword,null,pageNumber);
+		Assert.assertNotNull(page);
+		Assert.assertTrue("必须要有数据",page.getTotalElements()>0);
+		
+		//获得第一个任务的id,然后根据id查询待办任务的详情，包括：表单的内容、属性、名称
+		String taskId = page.getContent().get(0).getTask().getId();
+		TaskForm taskForm = this.workflowService.getTaskForm(taskId);
+		Assert.assertNotNull(taskForm);//表单不能为空
+		Assert.assertNotNull(taskForm.getContent());//表单内容不能为空
+		Assert.assertNotNull(taskForm.getFormKey());//表单名字不能为空
+		Assert.assertNotNull(taskForm.getFormData());//表单属性不能为空
 	}
 	
 }

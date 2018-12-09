@@ -280,6 +280,30 @@ public class WorkflowServiceImpl implements WorkflowService {
 		tf.setDefinition(definition);
 		return tf;
 	}
+	@Override
+	public TaskForm getTaskForm(String taskId) {
+		//拿到task单例
+		Task task =this.taskService.createTaskQuery().taskId(taskId).singleResult();
+		//调用上面方法  查询流程定义
+		TaskForm tf= this.conver2TaskForm(task);
+		//表单内容
+		Object content;
+		try {//有表单内容  根据Id拿到
+			content = this.formService.getRenderedTaskForm(taskId);
+		}catch (Exception e) {
+			//没表单内容   出现异常
+			content = null;
+		}
+		//表单数据  调用表单服务层方法根据Id拿到任务表单数据
+		FormData formData = this.formService.getTaskFormData(taskId);
+		//表单名称  根据任务id拿到  
+		String formKey = this.formService.getTaskFormKey(tf.getDefinition().getId(),task.getTaskDefinitionKey());
+		//将内容、数据、名称 设进去表单里面  并返回
+		tf.setContent(content);
+		tf.setFormData(formData);
+		tf.setFormKey(formKey);
+		return tf;
+	}
 	
 	
 	

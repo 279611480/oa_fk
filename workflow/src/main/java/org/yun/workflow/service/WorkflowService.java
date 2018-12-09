@@ -29,6 +29,8 @@ public interface WorkflowService {
 	Result start(String processDefinitionId, Map<String, String[]> params);
 
 	Page<TaskForm> findTasks(String keyword, String processInstanceId, int pageNumber);
+
+	TaskForm getTaskForm(String taskId);
 	
 	
 	

@@ -2,7 +2,7 @@
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="测试">
   <process id="HelloWorld" name="你好世界" isExecutable="true" activiti:candidateStarterUsers="YC，YUN">
     <startEvent id="startHello" name="开启HelloWorld"></startEvent>
-    <userTask id="usertask1" name="任务名称" activiti:assignee="用户1" activiti:formKey="表单名称"></userTask>
+    <userTask id="usertask1" name="任务名称" activiti:assignee="用户1" activiti:formKey="HelloWorld-task1.html"></userTask>
     <sequenceFlow id="flow1" sourceRef="startHello" targetRef="usertask1"></sequenceFlow>
     <exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway" default="flow3"></exclusiveGateway>
     <userTask id="usertask2" name="任务1" activiti:candidateUsers="用户2，用户3"></userTask>
