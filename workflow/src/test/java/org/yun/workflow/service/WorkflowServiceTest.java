@@ -1,6 +1,5 @@
 package org.yun.workflow.service;
 
-import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -11,12 +10,13 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.activiti.bpmn.converter.util.BpmnXMLUtil;
-import org.activiti.engine.RepositoryService;
+import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.junit.Assert;
 import org.junit.Before;
@@ -28,8 +28,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.yun.common.data.domain.Result;
+import org.yun.identity.UserHolder;
+import org.yun.identity.domain.Role;
+import org.yun.identity.domain.User;
 import org.yun.workflow.WorkflowConfig;
 import org.yun.workflow.vo.ProcessForm;
+import org.yun.workflow.vo.TaskForm;
 
 
 @RunWith(SpringRunner.class)//注解（表示  使用test测试框架）
@@ -63,6 +67,25 @@ public class WorkflowServiceTest extends AbstractJUnit4SpringContextTests {//继
 		if(definition != null) {
 			processDefinitionId = definition.getId();	
 		}
+		
+		//模拟用户、用户的角色（用户组）
+		User user = new User();
+		user.setId("用户1");
+		user.setName("用户1");
+		
+		Role role = new Role();
+		role.setId("用户组1");
+		role.setName("用户组1");
+		
+		List<Role> roles = new LinkedList<>();
+		roles.add(role);
+		user.setRoles(roles);
+		
+		UserHolder.set(user);
+		//告诉流程引擎：当前用户的ID是什么
+		//这句话必须要放到拦截器里面
+		Authentication.setAuthenticatedUserId("初始测试用户");
+		
 	}
 
 	private void addFile(ZipOutputStream out, String name) throws IOException, URISyntaxException {
@@ -130,6 +153,17 @@ public class WorkflowServiceTest extends AbstractJUnit4SpringContextTests {//继
 		Assert.assertNotNull(result);
 		Assert.assertEquals(Result.CODE_OK, result.getCode());
 	}
-	
+	@Test
+	public void findTests() {
+		//启动
+		start();//启动一个流程实例，用来测试待办任务
+		//定义关键字  以及  页码   页面，调用服务层方法 根据传进去的关键字 流程实例id 页码  查询Tasks
+		//断言页面不为空  总记录数大于0
+		String keyword =null;
+		int pageNumber = 0;
+		Page<TaskForm> page = this.workflowService.findTasks(keyword,null,pageNumber);
+		Assert.assertNotNull(page);
+		Assert.assertTrue("必须要有数据",page.getTotalElements()>0);
+	}
 	
 }

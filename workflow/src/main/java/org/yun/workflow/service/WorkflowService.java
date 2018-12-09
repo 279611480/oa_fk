@@ -7,6 +7,7 @@ import org.activiti.engine.repository.ProcessDefinition;
 import org.springframework.data.domain.Page;
 import org.yun.common.data.domain.Result;
 import org.yun.workflow.vo.ProcessForm;
+import org.yun.workflow.vo.TaskForm;
 
 public interface WorkflowService {
 	
@@ -26,5 +27,9 @@ public interface WorkflowService {
 	ProcessForm findDefinitionByKey(String key);
 
 	Result start(String processDefinitionId, Map<String, String[]> params);
+
+	Page<TaskForm> findTasks(String keyword, String processInstanceId, int pageNumber);
+	
+	
 	
 }

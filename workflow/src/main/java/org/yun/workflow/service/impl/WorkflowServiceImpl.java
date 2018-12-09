@@ -3,18 +3,24 @@ package org.yun.workflow.service.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipInputStream;
 
 import org.activiti.engine.FormService;
+import org.activiti.engine.HistoryService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
+import org.activiti.engine.TaskService;
 import org.activiti.engine.form.FormData;
+import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.repository.DeploymentBuilder;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.repository.ProcessDefinitionQuery;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
+import org.activiti.engine.task.TaskQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +31,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.yun.common.data.domain.Result;
+import org.yun.identity.UserHolder;
+import org.yun.identity.domain.User;
+import org.yun.identity.service.IdentityService;
 import org.yun.workflow.service.WorkflowService;
 import org.yun.workflow.vo.ProcessForm;
+import org.yun.workflow.vo.TaskForm;
 
 import com.fasterxml.jackson.annotation.JacksonInject.Value;
 
@@ -44,6 +54,15 @@ public class WorkflowServiceImpl implements WorkflowService {
 	private FormService formService;
 	@Autowired
 	private RuntimeService runtimeService;
+	//代办任务服务
+	@Autowired
+	private TaskService taskService;
+	//历史服务
+	@Autowired
+	private HistoryService historyService;
+	//我们自己系统里面的用户权限服务，不使用流程引擎
+	@Autowired
+	private IdentityService identityService;
 	
 	@Override
 	public Result deploy(String name, InputStream in) {
@@ -195,6 +214,73 @@ public class WorkflowServiceImpl implements WorkflowService {
 	private void saveProcessTrace(ProcessDefinition definition, ProcessInstance instance, String remark) {
 		// TODO 暂时不保存流程跟踪信息，因为需要一个自定义的表来存储
 	}
+	
+	@Override
+	public Page<TaskForm> findTasks(String keyword, String processInstanceId, int pageNumber) {
+		//根据之前定义的UserHolder获取User   定义PageAble  定义每页显示多少条数据
+		User user = UserHolder.get();
+		Pageable pageable = PageRequest.of(pageNumber, 10);
+		//1.根据当前用户查询代办任务列表，并且分页查询 【】
+		TaskQuery query = this.taskService.createTaskQuery()
+				.orderByTaskCreateTime().desc();//按时间倒序，最新收到放到前面
+		//判断，用户不为空的话，
+		if(user != null) {
+			query.taskAssignee(user.getId());//根据用户的Id查询当前用户的待办任务
+		}
+		//如果，关键字，不为空，模糊查询，
+		if(!StringUtils.isEmpty(keyword)) {
+			keyword = "%" + keyword + "%";
+			query.taskNameLike(keyword);//有关键字则使用用户的名称来模糊匹配
+		}
+		//如果，流程实例Id 不为空，根据流程实例id查询待办
+		if(!StringUtils.isEmpty(processInstanceId)) {
+			query.processInstanceId(processInstanceId);	
+		}
+		//查询总数，
+		long total = query.count();
+		//查询一页数据
+		List<Task> taskList = query.listPage((int)pageable.getOffset(), pageable.getPageSize());
+		// 2.根据得到的任务列表，需要把结果封装成TaskForm对象
+		List<TaskForm> content = new LinkedList<>();
+		taskList.forEach(task->{
+			TaskForm tf = this.conver2TaskForm(task);
+			content.add(tf);
+		});
+		Page<TaskForm> page = new PageImpl<>(content, pageable, total);
+		return page;
+	}
+	//被上面调用的方法   
+	private TaskForm conver2TaskForm(Task task) {
+		// new一个TaskForm  表单实例
+		TaskForm tf = new TaskForm();
+		//将任务Task设进去表单
+		tf.setTask(task);
+		//3.查询任务对应的流程实例
+		// 历史流程实例  历史服务创建实例query，获取流程实例id，创建单例实例    设置进去TaskForm里面
+		HistoricProcessInstance instance = this.historyService.createHistoricProcessInstanceQuery()
+				.processInstanceId(task.getProcessInstanceId())
+				.singleResult();
+		tf.setInstance(instance);
+		//4.查询流程实例的创始人
+		//默认是没有StartUserId，必须要在启动流程实例之前，把当前用户告诉流程引擎
+		//通常是增加一个拦截器，再调用Activiti里面的一个静态方法来设置
+		// Authentication.setAuthenticatedUserId(authenticatedUserId);
+		String id =instance.getStartUserId();
+		if(id != null) {//数据库有数据  加这个判断    不然报错  找不到id
+			User initialUser = this.identityService.findUserById(instance.getStartUserId());
+			tf.setInitialUser(initialUser);
+		}else {//没id就不找
+			System.out.println("没找到Id");
+		}
+		
+		
+		
+		//5.查询任务对应的流程定义	
+		ProcessDefinition definition =this.findDefinitionById(task.getProcessDefinitionId());
+		tf.setDefinition(definition);
+		return tf;
+	}
+	
 	
 	
 }

@@ -15,6 +15,13 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
+  			<!-- 继承此模块 为了其中的用户  -->
+			<groupId>org.yun</groupId>
+			<artifactId>identity</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
 			<!-- 为了它里面自带的分页 -->
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-commons</artifactId>
