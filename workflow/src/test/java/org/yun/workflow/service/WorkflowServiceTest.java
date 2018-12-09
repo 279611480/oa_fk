@@ -1,6 +1,8 @@
 package org.yun.workflow.service;
 
 
+import static org.junit.Assert.*;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -18,6 +20,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.task.Task;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.yun.common.data.domain.Result;
 import org.yun.identity.UserHolder;
@@ -38,7 +42,8 @@ import org.yun.workflow.vo.TaskForm;
 
 @RunWith(SpringRunner.class)//注解（表示  使用test测试框架）
 @ContextConfiguration(classes= {WorkflowConfig.class})	//注解  加入配置信息
-public class WorkflowServiceTest extends AbstractJUnit4SpringContextTests {//继承无回滚事物【数据库会保存】extends AbstractJUnit4SpringContextTests
+public class WorkflowServiceTest extends AbstractTransactionalJUnit4SpringContextTests{//继承有回滚事物【数据库不会保存，因为会回滚】
+//extends AbstractJUnit4SpringContextTests {//继承无回滚事物【数据库会保存】extends AbstractJUnit4SpringContextTests
 	
 	//自动注入  服务层接口
 	@Autowired
@@ -189,4 +194,34 @@ public class WorkflowServiceTest extends AbstractJUnit4SpringContextTests {//继
 		Assert.assertNotNull(taskForm.getFormData());//表单属性不能为空
 	}
 	
+	@Test
+	public void testComplete() throws Exception {
+		start();//开启一个流程实例用于测试待办任务
+		String keyword = null;
+		int pageNumber =0;
+		Page<TaskForm> page = this.workflowService.findTasks(keyword,null, pageNumber);
+		Assert.assertNotNull(page);
+		Assert.assertTrue("必须要有数据",page.getTotalElements()>0);
+		
+		//拿到taskId
+		String taskId = page.getContent().get(0).getTask().getId();
+		//完成任务以后，根据实例的Id查询任务，检查新的任务是否为预期任务
+		String processInstanceId= page.getContent().get(0).getTask().getProcessInstanceId();
+		
+		//根据任务的Id完成任务
+		//用户在页面上填写哪些信息，对于开发者来讲是不可预测的
+		//所以为了让流程能够继续下一个步骤，必须获取所有的请求参数。类似于启动流程实例的时候
+		Map<String,String[]> params = new HashMap<>();
+		params.put("参数",new String[] {"b"});//模拟页面传入的参数，用于下一步的判断
+		
+		this.workflowService.complete(taskId,params);
+		
+		//测试以后，需要判断新的任务是否为【任务2】
+		UserHolder.remove();//后面不是相同的用户的任务，所以清空当前用户
+		page = this.workflowService.findTasks(keyword, processInstanceId, pageNumber);
+		Assert.assertNotNull(page);
+		Assert.assertTrue("必须要有数据",page.getTotalElements()>0);
+		Task task = page.getContent().get(0).getTask();
+		Assert.assertEquals("任务2", task.getName());
+	}
 }

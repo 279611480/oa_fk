@@ -201,7 +201,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 				.startProcessInstanceById(processDefinitionId, businessKey, variables);
 
 		// 5.记录流程跟踪信息，方便查看每个步骤谁做了什么事情
-		saveProcessTrace(definition, instance, remark);
+		saveProcessTrace(definition, instance, null, remark);
 
 		return Result.ok("流程实例启动成功");
 	}
@@ -211,7 +211,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 		return null;
 	}
 
-	private void saveProcessTrace(ProcessDefinition definition, ProcessInstance instance, String remark) {
+	private void saveProcessTrace(ProcessDefinition definition, ProcessInstance instance, Task task, String remark) {
 		// TODO 暂时不保存流程跟踪信息，因为需要一个自定义的表来存储
 	}
 	
@@ -303,6 +303,43 @@ public class WorkflowServiceImpl implements WorkflowService {
 		tf.setFormData(formData);
 		tf.setFormKey(formKey);
 		return tf;
+	}
+	@Override
+	public void complete(String taskId, Map<String, String[]> params) {
+		// 1.获取当前用户【之前在用户模块已经定义了UserHolder方法】
+		User user = UserHolder.get();
+		//2.整理请求参数，跟启动流程一样    定义Map集合String 与Object  variables  
+		Map<String,Object> variables = new HashMap<>();
+		//循环遍历形参上的Params （key，value）  当指的长度为1的时候，放入variables   不然的话，所有放入（请求参数）就好了
+		params.forEach((key,value)->{
+			if(value.length == 1) {//只要一个值
+				variables.put(key, value[0]);
+			}else {//不然就是多个值
+				variables.put(key, value);
+			}			
+		});
+		//3.获取remark参数的值，备注不需要传入流程引擎
+		//remove方法是把key对应的键值对删除，返回key对应的值
+		Object tmp = variables.remove("remark");
+		String remark = tmp != null ? tmp.toString() : null;		
+		//4.查询任务的实例，只要Task对象  单例  taskService创建 query  拿到taskId  在拿到单例
+		Task task = this.taskService.createTaskQuery().taskId(taskId).singleResult();
+ 		//5.判断处理人是否为当前用户，如果不是则应该抛出异常
+		if(!task.getAssignee().equals(user.getId())) {
+			throw new IllegalArgumentException("非法请求：当前用户和任务的处理人不同");
+		}
+		//6.查询流程定义
+		ProcessDefinition definition= this.findDefinitionById(task.getProcessDefinitionId());
+		//7.查询流程实例
+		ProcessInstance instance = this.runtimeService.createProcessInstanceQuery()//
+		.processInstanceId(task.getProcessInstanceId())//
+		.singleResult();
+		//8.完成任务，核心操作
+		this.taskService.complete(taskId,variables);
+		//9.保存流程跟踪信息
+		this.saveProcessTrace(definition, instance,task ,remark);
+		
+		
 	}
 	
 	

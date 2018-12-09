@@ -31,6 +31,8 @@ public interface WorkflowService {
 	Page<TaskForm> findTasks(String keyword, String processInstanceId, int pageNumber);
 
 	TaskForm getTaskForm(String taskId);
+
+	void complete(String taskId, Map<String, String[]> params);
 	
 	
 	
